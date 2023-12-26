@@ -1,0 +1,8 @@
+## Interface: 51972
+## Version: 0.1.0
+## Title: Poker Dice
+## Notes: Do you like to play poker with dice?
+## Author: Onirim
+
+Localization.lua
+Core.lua
