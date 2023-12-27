@@ -36,3 +36,5 @@ List of combinations in order of value:
 
 When the combinations are of equal value, the one that 
 has the highest dice is declared the winner!
+
+At this time, the add-on only work in French or English languages. I'll make translation possible via Curseforge as soon as possible for the other languages :)
