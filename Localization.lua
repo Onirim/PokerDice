@@ -58,6 +58,10 @@ L["enUS"] = {
         ["Rules"] = "Rules >>",
 		["Rolls the dice and get "] = "Rolls the dice and get ",
 		["Rerolls the dice and get "] = "Rerolls the dice and get ",
+		["add "] = "add ",
+		["remove "] = "remove ",
+		[" piece(s) to the pot"] = " piece(s) to the pot",
+		[" piece(s) from the pot"] = " piece(s) from the pot",
 		["RuleTextLib"] = [[This is a dice poker game for two or more players. 
 The objective is to achieve the best combination in two dice 
 rolls. The first player is the one who won the previous round. 

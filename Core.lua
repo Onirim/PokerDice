@@ -240,9 +240,9 @@ local piecesMovedToPot = 0
 local function showFadeOutText(frame, text)
     local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
     fadeOutText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
-    fadeOutText:SetPoint("TOP", potFrame, "TOP", 20, 0)
+    fadeOutText:SetPoint("TOP", potFrame, "TOP", 0, 25)
     fadeOutText:SetText(text)
-    fadeOutText:SetTextColor(1, 1, 1)
+    fadeOutText:SetTextColor(1, 1, 0)
     UIFrameFadeOut(fadeOutText, 2, 1, 0) -- Fait disparaître le texte en 2 secondes
 end
 
