@@ -6,8 +6,10 @@ local L = core.Locales
 
 L["frFR"] = {
         ["Roll the dice"] = "Lancer les dés",
+		["Reroll the dice"] = "Relancer ces dés",
         ["Rules"] = "Règles >>",
 		["Rolls the dice and get "] = "lance les dés et obtient ",
+		["Rerolls the dice and get "] = "relance les dés et obtient ",
 		["RuleTextLib"] = [[Il s'agit d'un jeu de Poker aux dés pour deux joueurs et plus.
 L'objectif est de réaliser la meilleure combinaison en deux
 lancers de dés. Le premier joueur est celui celui qui 
@@ -48,8 +50,10 @@ comporte les dés les plus hauts est déclarée gagnante !]]
 	
 L["enUS"] = {
         ["Roll the dice"] = "Roll the dice",
+		["Reroll the dice"] = "Reroll the dice",
         ["Rules"] = "Rules >>",
 		["Rolls the dice and get "] = "Rolls the dice and get ",
+		["Rerolls the dice and get "] = "Rerolls the dice and get ",
 		["RuleTextLib"] = [[This is a dice poker game for two or more players. 
 The objective is to achieve the best combination in two dice 
 rolls. The first player is the one who won the previous round. 

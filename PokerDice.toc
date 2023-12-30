@@ -1,5 +1,5 @@
-## Interface: 52649
-## Version: 1.0.1
+## Interface: 100200
+## Version: 1.1.0
 ## Title: Poker Dice
 ## Notes: Do you like to play poker with dice?
 ## Author: Onirim
