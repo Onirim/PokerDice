@@ -138,43 +138,43 @@ SlashCmdList["POKER"] = function(msg)
     PokerdiceFrame:Show()
 end
 
-------------------------
--- FENETRE DES REGLES --
-------------------------
+--------------------
+-- FENETRE "PLUS" --
+--------------------
 
--- Création de la fenêtre des règles et des combinaisons
-local CombinaisonsFrame = CreateFrame("Frame", "CombinaisonsFrame", PokerdiceFrame, "BasicFrameTemplate")
-CombinaisonsFrame:SetSize(400, 470) 
-CombinaisonsFrame:SetPoint("LEFT", PokerdiceFrame, "RIGHT") 
-CombinaisonsFrame:Hide()
+-- Création de la fenêtre des règles et des Plus
+local PlusFrame = CreateFrame("Frame", "PlusFrame", PokerdiceFrame, "BasicFrameTemplate")
+PlusFrame:SetSize(400, 470) 
+PlusFrame:SetPoint("LEFT", PokerdiceFrame, "RIGHT") 
+PlusFrame:Hide()
 
-CombinaisonsFrame:EnableMouse(true)
-CombinaisonsFrame:SetMovable(true)
-CombinaisonsFrame:RegisterForDrag("LeftButton")
-CombinaisonsFrame:SetScript("OnDragStart", function() PokerdiceFrame:StartMoving() end)
-CombinaisonsFrame:SetScript("OnDragStop", function() PokerdiceFrame:StopMovingOrSizing() end)
+PlusFrame:EnableMouse(true)
+PlusFrame:SetMovable(true)
+PlusFrame:RegisterForDrag("LeftButton")
+PlusFrame:SetScript("OnDragStart", function() PokerdiceFrame:StartMoving() end)
+PlusFrame:SetScript("OnDragStop", function() PokerdiceFrame:StopMovingOrSizing() end)
 
-local combinaisonsText = CombinaisonsFrame:CreateFontString(nil, "OVERLAY")
-combinaisonsText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-combinaisonsText:SetPoint("LEFT", CombinaisonsFrame, "TOP", -190, -240)
-combinaisonsText:SetJustifyH("LEFT")
-combinaisonsText:SetJustifyV("TOP")
+local PlusText = PlusFrame:CreateFontString(nil, "OVERLAY")
+PlusText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+PlusText:SetPoint("LEFT", PlusFrame, "LEFT", 5, 120)
+PlusText:SetJustifyH("LEFT")
+PlusText:SetJustifyV("TOP")
 local rulesText = L["RuleTextLib"]
-combinaisonsText:SetText(rulesText)
+PlusText:SetText(rulesText)
 
 
 -- Création du bouton des règles
-local combinaisonsButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
-combinaisonsButton:SetPoint("TOP", rollButton, "TOP", 42, 415)
-combinaisonsButton:SetSize(100, 25)
-combinaisonsButton:SetText(L["Rules"])
-combinaisonsButton:SetNormalFontObject("GameFontNormalSmall")
-combinaisonsButton:SetHighlightFontObject("GameFontHighlightSmall")
-combinaisonsButton:SetScript("OnClick", function()
-    if CombinaisonsFrame:IsShown() then
-        CombinaisonsFrame:Hide()
+local PlusButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
+PlusButton:SetPoint("TOP", rollButton, "TOP", 42, 415)
+PlusButton:SetSize(100, 25)
+PlusButton:SetText(L["Plus"])
+PlusButton:SetNormalFontObject("GameFontNormalSmall")
+PlusButton:SetHighlightFontObject("GameFontHighlightSmall")
+PlusButton:SetScript("OnClick", function()
+    if PlusFrame:IsShown() then
+        PlusFrame:Hide()
     else
-        CombinaisonsFrame:Show()
+        PlusFrame:Show()
     end
 end)
 
@@ -336,11 +336,96 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
             potText:SetText(pot - amount)
 			showFadeOutText(goldFrame, "-" .. amount)
 			PlaySound(125355)
+		elseif action == "RESETPOT" then
+			potText:SetText(0)
+			PlaySound(125355)
         end
     end
 end)
 
+------------------------
+-- BOUTONS OPTIONNELS --
+------------------------
 
+-- Création de la boîte de dialogue de confirmation de reset du pot
+local ConfirmResetFrame = CreateFrame("Frame", "ConfirmResetFrame", PlusFrame, "BasicFrameTemplate")
+ConfirmResetFrame:SetSize(400, 100)
+ConfirmResetFrame:SetPoint("CENTER", PlusFrame, "CENTER", 100, 10)
+ConfirmResetFrame:Hide()
 
+local ConfirmText = ConfirmResetFrame:CreateFontString(nil, "OVERLAY")
+ConfirmText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+ConfirmText:SetPoint("CENTER")
+ConfirmText:SetText(L["Confirm reset the pot?"])
 
+local YesResetButton = CreateFrame("Button", nil, ConfirmResetFrame, "GameMenuButtonTemplate")
+YesResetButton:SetPoint("BOTTOMLEFT", ConfirmResetFrame, "BOTTOM", 10, 10)
+YesResetButton:SetSize(80, 25)
+YesResetButton:SetText(L["Yes"])
+YesResetButton:SetScript("OnClick", function()
+    potText:SetText(0)
+	local channel = IsInRaid() and "RAID" or "PARTY"
+	C_ChatInfo.SendAddonMessage("PokerDice", "RESETPOT", channel)
+	SendChatMessage(L["has reset the pot to zero"], "EMOTE")
+    ConfirmResetFrame:Hide()
+end)
 
+local NoResetButton = CreateFrame("Button", nil, ConfirmResetFrame, "GameMenuButtonTemplate")
+NoResetButton:SetPoint("BOTTOMRIGHT", ConfirmResetFrame, "BOTTOM", -10, 10)
+NoResetButton:SetSize(80, 25)
+NoResetButton:SetText(L["No"])
+NoResetButton:SetScript("OnClick", function()
+    ConfirmResetFrame:Hide()
+end)
+
+-- Création du bouton de reset du pot
+local ResetButton = CreateFrame("Button", nil, PlusFrame, "GameMenuButtonTemplate")
+ResetButton:SetPoint("BOTTOM", rollButton, "RIGHT", 100, 0)
+ResetButton:SetSize(125, 25)
+ResetButton:SetText(L["Reset the pot"])
+ResetButton:SetNormalFontObject("GameFontNormalSmall")
+ResetButton:SetHighlightFontObject("GameFontHighlightSmall")
+ResetButton:SetScript("OnClick", function()
+    ConfirmResetFrame:Show()
+end)
+
+-- Création de la boîte de dialogue de confirmation de gage
+local ConfirmPenaltyFrame = CreateFrame("Frame", "ConfirmPenaltyFrame", PlusFrame, "BasicFrameTemplate")
+ConfirmPenaltyFrame:SetSize(400, 120)
+ConfirmPenaltyFrame:SetPoint("CENTER", PlusFrame, "CENTER", 100, -110)
+ConfirmPenaltyFrame:Hide()
+
+local ConfirmText = ConfirmPenaltyFrame:CreateFontString(nil, "OVERLAY")
+ConfirmText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+ConfirmText:SetPoint("CENTER")
+ConfirmText:SetText(L["Do you really want a penalty for two coins?"])
+
+local YesPenaltyButton = CreateFrame("Button", nil, ConfirmPenaltyFrame, "GameMenuButtonTemplate")
+YesPenaltyButton:SetPoint("BOTTOMLEFT", ConfirmPenaltyFrame, "BOTTOM", 10, 10)
+YesPenaltyButton:SetSize(80, 25)
+YesPenaltyButton:SetText(L["Yes"])
+YesPenaltyButton:SetScript("OnClick", function()
+	SendChatMessage(L["has accepted a penalty for gaining two coins"], "EMOTE")
+	local gold = tonumber(goldText:GetText())
+	goldText:SetText(gold + 2)
+    ConfirmPenaltyFrame:Hide()
+end)
+
+local NoPenaltyButton = CreateFrame("Button", nil, ConfirmPenaltyFrame, "GameMenuButtonTemplate")
+NoPenaltyButton:SetPoint("BOTTOMRIGHT", ConfirmPenaltyFrame, "BOTTOM", -10, 10)
+NoPenaltyButton:SetSize(80, 25)
+NoPenaltyButton:SetText(L["No"])
+NoPenaltyButton:SetScript("OnClick", function()
+    ConfirmPenaltyFrame:Hide()
+end)
+
+-- Création du bouton de prise de gage
+local PenaltyButton = CreateFrame("Button", nil, PlusFrame, "GameMenuButtonTemplate")
+PenaltyButton:SetPoint("BOTTOM", rollButton, "RIGHT", 300, 0)
+PenaltyButton:SetSize(210, 25)
+PenaltyButton:SetText(L["Take a penalty, gain two coins"])
+PenaltyButton:SetNormalFontObject("GameFontNormalSmall")
+PenaltyButton:SetHighlightFontObject("GameFontHighlightSmall")
+PenaltyButton:SetScript("OnClick", function()
+    ConfirmPenaltyFrame:Show()
+end)

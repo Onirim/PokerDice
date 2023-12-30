@@ -7,35 +7,32 @@ local L = core.Locales
 L["frFR"] = {
         ["Roll the dice"] = "Lancer les dés",
 		["Reroll the dice"] = "Relancer ces dés",
-        ["Rules"] = "Règles >>",
+        ["Plus"] = "Plus >>",
 		["Rolls the dice and get "] = "lance les dés et obtient ",
 		["Rerolls the dice and get "] = "relance les dés et obtient ",
 		["add "] = "ajoute ",
 		["remove "] = "retire ",
 		[" piece(s) to the pot"] = " pièce(s) au pot",
 		[" piece(s) from the pot"] = " pièce(s) du pot",
-		["RuleTextLib"] = [[Il s'agit d'un jeu de Poker aux dés pour deux joueurs et plus.
-L'objectif est de réaliser la meilleure combinaison en deux
-lancers de dés. Le premier joueur est celui celui qui 
-a gagné le tour précédent. Une partie normale se joue
-avec six pièces par joueur.
+		["Reset the pot"] = "Réinitialiser le pot",
+		["Confirm reset the pot?"] = [[Souhaitez-vous vraiment réinitialiser le pot ?
+Il sera remis à zéro pour tous les joueurs du groupe !]],
+		["has reset the pot to zero"] = "a réinitialisé le pot à zéro",
+		["Take a penalty, gain two coins"] = "Prenez un gage, gagnez deux pièces",
+		["Do you really want a penalty for two coins?"] = [[Voulez-vous vraiment prendre un gage pour gagner deux 
+pièces ? Assurez-vous que votre gage convienne aux
+autres joueurs !]],
+		["has accepted a penalty for gaining two coins"] = "a accepté un gage pour gagner deux pièces",
+		["Yes"] = "Oui",
+		["No"] = "Non",
+		["RuleTextLib"] = [[
 
-- Tout le monde commence par miser une pièce.
-- Ensuite les joueurs font tous un premier lancer de dé, dans
-l'ordre des aiguilles d'une horloge.
-- En commençant par le premier joueur, chacun peut 
-annoncer s'il augmente la mise d'une pièce supplémentaire. 
-Dans ce cas, tous ceux qui veulent suivre doivent également 
-miser une pièce de plus. les joueurs qui ne suivent pas se 
-couchent et sortent du tour en perdant leur mise. 
-On ne peut augmenter la mise qu'une seule fois par tour,
-tous joueurs confondus.
-- Lorsque tout le monde a suivi ou s'est couché,
-chaque joueur sélectionne les dés qu'il souhaite relancer,
-puis les relance.
 
-La combinaison de la plus haute valeur l'emporte et
-le vainqueur rafle la mise !
+
+Bienvenue sur PokerDice !
+
+Cet add-on nécessite que les joueurs soient en groupe pour
+fonctionner correctement.
 
 Liste des combinaisons par ordre de valeur :
 
@@ -55,32 +52,31 @@ comporte les dés les plus hauts est déclarée gagnante !]]
 L["enUS"] = {
         ["Roll the dice"] = "Roll the dice",
 		["Reroll the dice"] = "Reroll the dice",
-        ["Rules"] = "Rules >>",
+        ["Plus"] = "Plus >>",
 		["Rolls the dice and get "] = "Rolls the dice and get ",
 		["Rerolls the dice and get "] = "Rerolls the dice and get ",
 		["add "] = "add ",
 		["remove "] = "remove ",
-		[" piece(s) to the pot"] = " piece(s) to the pot",
-		[" piece(s) from the pot"] = " piece(s) from the pot",
-		["RuleTextLib"] = [[This is a dice poker game for two or more players. 
-The objective is to achieve the best combination in two dice 
-rolls. The first player is the one who won the previous round. 
-A normal game is played with six pieces per player.
+		[" coin(s) to the pot"] = " coin(s) to the pot",
+		[" coin(s) from the pot"] = " coin(s) from the pot",
+		["Reset the pot"] = "Reset the pot",
+		["Confirm reset the pot?"] = [[Do you really want to reset the pot?
+The pot will be reset to zero for all players in the group!]],
+		["has reset the pot to zero"] = "has reset the pot to zero",
+		["Take a penalty, gain two coins"] = "Take a penalty, gain two coins",
+		["Do you really want a penalty for two coins?"] = [[Do you really want to take a penalty and gain two 
+coins? Be sure your penalty is accepted by the
+other players!]],
+		["has accepted a penalty for gaining two coins"] = "has accepted a penalty for gaining two coins",
+		["Yes"] = "Yes",
+		["No"] = "No",
+		["RuleTextLib"] = [[
+		
 
-- Everyone starts by betting one piece.
-- Then the players all make a first roll of the dice, in 
-clockwise order.
-- Starting with the first player, each player can announce 
-if they increase the bet by an additional piece. In this 
-case, everyone who wants to follow must also bet one more 
-piece. Players who do not follow fold and drop out of the 
-round, losing their bet. The bet can only be increased once 
-per round, for all players.
-- When everyone has followed or folded, each player selects 
-the dice they wish to reroll, then rerolls them.
+Welcome to PokerDice!
 
-The combination of the highest value wins and the 
-winner takes the pot!
+This add-on need the players to join the same party
+or raid to work properly.
 
 List of combinations in order of value:
 
