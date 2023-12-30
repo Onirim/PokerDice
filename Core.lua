@@ -26,7 +26,7 @@ local isReroll = false
 -- Création du bouton de roll
 local rollButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
 rollButton:SetPoint("TOP", PokerdiceFrame, "BOTTOM", 0, 30)
-rollButton:SetSize(140, 40)
+rollButton:SetSize(150, 40)
 rollButton:SetText(L["Roll the dice"])
 rollButton:SetNormalFontObject("GameFontNormalLarge")
 rollButton:SetHighlightFontObject("GameFontHighlightLarge")
@@ -195,25 +195,93 @@ goldText:SetPoint("CENTER")
 goldText:SetText("6") -- Initialisé à 6 par défaut
 
 -- Création des boutons pour augmenter et diminuer le nombre de pièces d'or
-local increaseButton = CreateFrame("Button", nil, goldFrame, "UIPanelButtonTemplate")
-increaseButton:SetSize(20, 30)
-increaseButton:SetPoint("LEFT", goldFrame, "RIGHT", -10, 25)
-increaseButton:SetText("^")
+local increaseButton = CreateFrame("Button", nil, goldFrame)
+increaseButton:SetSize(35, 35)
+increaseButton:SetPoint("LEFT", goldFrame, "RIGHT", -40, 55)
+increaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowlup")
+
+local decreaseButton = CreateFrame("Button", nil, goldFrame)
+decreaseButton:SetSize(35, 35)
+decreaseButton:SetPoint("LEFT", goldFrame, "LEFT", 5, 55)
+decreaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowdown")
+
+
+------------------------
+--   GESTION DU POT   --
+------------------------
+
+-- Création du cadre pour le pot
+local potFrame = CreateFrame("Frame", nil, PokerdiceFrame)
+potFrame:SetSize(110, 110)
+potFrame:SetPoint("RIGHT", goldFrame, "RIGHT", 0, 125)
+
+-- Ajout de l'icône en fond
+local potBackground = potFrame:CreateTexture(nil, "BACKGROUND")
+potBackground:SetAllPoints()
+potBackground:SetTexture("Interface\\Icons\\inv_misc_bowl_01") -- Remplacez ceci par l'icône que vous voulez utiliser pour le pot
+
+local potText = potFrame:CreateFontString(nil, "OVERLAY")
+potText:SetFont("Fonts\\FRIZQT__.TTF", 40, "OUTLINE")
+potText:SetPoint("CENTER")
+potText:SetText("0") -- Initialisé à 0 par défaut
+
+---------------------
+-- GESTION DU POT  --
+---------------------
+
+-- Création d'une variable pour stocker le timer et le nombre de pièces déplacées vers le pot
+local timer
+local piecesMovedToPot = 0
+
+-- Modification des boutons pour augmenter et diminuer le nombre de pièces d'or
 increaseButton:SetScript("OnClick", function()
     local gold = tonumber(goldText:GetText())
-    goldText:SetText(gold + 1)
-	PlaySound(125355)
-end)
-
-local decreaseButton = CreateFrame("Button", nil, goldFrame, "UIPanelButtonTemplate")
-decreaseButton:SetSize(20, 30)
-decreaseButton:SetPoint("TOP", increaseButton, "BOTTOM", 0, -18)
-decreaseButton:SetText("v")
-decreaseButton:SetScript("OnClick", function()
-    local gold = tonumber(goldText:GetText())
+    local pot = tonumber(potText:GetText())
     if gold > 0 then
         goldText:SetText(gold - 1)
+        potText:SetText(pot + 1)
+        piecesMovedToPot = piecesMovedToPot + 1
 		PlaySound(125355)
+		
+		-- Annulation du timer précédent
+		if timer then
+			timer:Cancel()
+		end
+		
+		-- Démarrage d'un nouveau timer
+		timer = C_Timer.NewTimer(5, function()
+			if piecesMovedToPot > 0 then
+				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+			elseif piecesMovedToPot < 0 then
+				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+			end
+			piecesMovedToPot = 0
+		end)
     end
 end)
 
+decreaseButton:SetScript("OnClick", function()
+    local gold = tonumber(goldText:GetText())
+    local pot = tonumber(potText:GetText())
+    if pot > 0 then
+        goldText:SetText(gold + 1)
+        potText:SetText(pot - 1)
+        piecesMovedToPot = piecesMovedToPot - 1
+		PlaySound(125355)
+		
+		-- Annulation du timer précédent
+		if timer then
+			timer:Cancel()
+		end
+		
+		-- Démarrage d'un nouveau timer
+		timer = C_Timer.NewTimer(5, function()
+			if piecesMovedToPot > 0 then
+				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+			elseif piecesMovedToPot < 0 then
+				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+			end
+			piecesMovedToPot = 0
+		end)
+    end
+end)
