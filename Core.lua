@@ -2,6 +2,9 @@
 local _, core = ...
 local L = core.Locales[GetLocale()] or core.Locales["enUS"]
 
+-- Enregistrement du préfixe de l'addon
+C_ChatInfo.RegisterAddonMessagePrefix("PokerDice")
+
 
 -- Création de la fenêtre principale
 local PokerdiceFrame = CreateFrame("Frame", "PokerdiceFrame", UIParent, "BasicFrameTemplateWithInset")
@@ -18,7 +21,7 @@ PokerdiceFrame:Hide()
 local title = PokerdiceFrame:CreateFontString(nil, "OVERLAY")
 title:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 title:SetPoint("TOP", PokerdiceFrame, "TOP", 0, -5)
-title:SetText("Poker dice")
+title:SetText("PokerDice")
 
 -- Ajoutez une variable pour suivre si une relance a déjà été effectuée
 local isReroll = false
@@ -26,7 +29,7 @@ local isReroll = false
 -- Création du bouton de roll
 local rollButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
 rollButton:SetPoint("TOP", PokerdiceFrame, "BOTTOM", 0, 30)
-rollButton:SetSize(140, 40)
+rollButton:SetSize(150, 40)
 rollButton:SetText(L["Roll the dice"])
 rollButton:SetNormalFontObject("GameFontNormalLarge")
 rollButton:SetHighlightFontObject("GameFontHighlightLarge")
@@ -195,25 +198,149 @@ goldText:SetPoint("CENTER")
 goldText:SetText("6") -- Initialisé à 6 par défaut
 
 -- Création des boutons pour augmenter et diminuer le nombre de pièces d'or
-local increaseButton = CreateFrame("Button", nil, goldFrame, "UIPanelButtonTemplate")
-increaseButton:SetSize(20, 30)
-increaseButton:SetPoint("LEFT", goldFrame, "RIGHT", -10, 25)
-increaseButton:SetText("^")
+local increaseButton = CreateFrame("Button", nil, goldFrame)
+increaseButton:SetSize(35, 35)
+increaseButton:SetPoint("LEFT", goldFrame, "RIGHT", -40, 55)
+increaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowlup")
+
+local decreaseButton = CreateFrame("Button", nil, goldFrame)
+decreaseButton:SetSize(35, 35)
+decreaseButton:SetPoint("LEFT", goldFrame, "LEFT", 5, 55)
+decreaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowdown")
+
+
+------------------------
+-- AFFICHAGE DU POT   --
+------------------------
+
+-- Création du cadre pour le pot
+local potFrame = CreateFrame("Frame", nil, PokerdiceFrame)
+potFrame:SetSize(110, 110)
+potFrame:SetPoint("RIGHT", goldFrame, "RIGHT", 0, 125)
+
+-- Ajout de l'icône en fond
+local potBackground = potFrame:CreateTexture(nil, "BACKGROUND")
+potBackground:SetAllPoints()
+potBackground:SetTexture("Interface\\Icons\\inv_misc_bowl_01") -- Remplacez ceci par l'icône que vous voulez utiliser pour le pot
+
+local potText = potFrame:CreateFontString(nil, "OVERLAY")
+potText:SetFont("Fonts\\FRIZQT__.TTF", 40, "OUTLINE")
+potText:SetPoint("CENTER")
+potText:SetText("0") -- Initialisé à 0 par défaut
+
+---------------------
+-- GESTION DU POT  --
+---------------------
+
+-- Création d'une variable pour stocker le timer et le nombre de pièces déplacées vers le pot
+local timer
+local piecesMovedToPot = 0
+
+-- Création d'une fonction pour afficher un texte en fondu
+local function showFadeOutText(frame, text)
+    local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
+    fadeOutText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
+    fadeOutText:SetPoint("TOP", potFrame, "TOP", 20, 0)
+    fadeOutText:SetText(text)
+    fadeOutText:SetTextColor(1, 1, 1)
+    UIFrameFadeOut(fadeOutText, 2, 1, 0) -- Fait disparaître le texte en 2 secondes
+end
+
+-- Modification des boutons pour augmenter et diminuer le nombre de pièces d'or
 increaseButton:SetScript("OnClick", function()
     local gold = tonumber(goldText:GetText())
-    goldText:SetText(gold + 1)
-	PlaySound(125355)
-end)
-
-local decreaseButton = CreateFrame("Button", nil, goldFrame, "UIPanelButtonTemplate")
-decreaseButton:SetSize(20, 30)
-decreaseButton:SetPoint("TOP", increaseButton, "BOTTOM", 0, -18)
-decreaseButton:SetText("v")
-decreaseButton:SetScript("OnClick", function()
-    local gold = tonumber(goldText:GetText())
+    local pot = tonumber(potText:GetText())
     if gold > 0 then
         goldText:SetText(gold - 1)
+        potText:SetText(pot + 1)
+        piecesMovedToPot = piecesMovedToPot + 1
+		showFadeOutText(goldFrame, "+1")
 		PlaySound(125355)
+		
+		-- Annulation du timer précédent
+		if timer then
+			timer:Cancel()
+		end
+		
+		-- Démarrage d'un nouveau timer
+		timer = C_Timer.NewTimer(5, function()
+			if piecesMovedToPot > 0 then
+				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
+			elseif piecesMovedToPot < 0 then
+				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
+				
+			end
+			piecesMovedToPot = 0
+		end)
     end
 end)
+
+decreaseButton:SetScript("OnClick", function()
+    local gold = tonumber(goldText:GetText())
+    local pot = tonumber(potText:GetText())
+    if pot > 0 then
+        goldText:SetText(gold + 1)
+        potText:SetText(pot - 1)
+        piecesMovedToPot = piecesMovedToPot - 1
+		showFadeOutText(goldFrame, "-1")
+		PlaySound(125355)
+		
+		-- Annulation du timer précédent
+		if timer then
+			timer:Cancel()
+		end
+		
+		-- Démarrage d'un nouveau timer
+		timer = C_Timer.NewTimer(5, function()
+			if piecesMovedToPot > 0 then
+				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
+			elseif piecesMovedToPot < 0 then
+				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
+			end
+			piecesMovedToPot = 0
+		end)
+    end
+end)
+
+-- Création d'un cadre pour gérer les événements
+local eventFrame = CreateFrame("Frame")
+
+-- Enregistrement de l'événement "CHAT_MSG_ADDON"
+eventFrame:RegisterEvent("CHAT_MSG_ADDON")
+
+-- Définition du gestionnaire d'événements
+eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, sender)
+    if event == "CHAT_MSG_ADDON" and prefix == "PokerDice" then
+        -- Ignore les messages envoyés par le joueur lui-même
+        local playerName = UnitName("player") -- Obtient le nom du joueur
+        local senderName = strsplit("-", sender) -- Sépare le nom de l'expéditeur du nom du royaume
+        if senderName == playerName then return end
+
+        local action, amount = strsplit(" ", message)
+        amount = tonumber(amount)
+        if action == "ADD" then
+            local pot = tonumber(potText:GetText())
+            potText:SetText(pot + amount)
+			showFadeOutText(goldFrame, "+" .. amount)
+			PlaySound(125355)
+        elseif action == "REMOVE" then
+            local pot = tonumber(potText:GetText())
+            potText:SetText(pot - amount)
+			showFadeOutText(goldFrame, "-" .. amount)
+			PlaySound(125355)
+        end
+    end
+end)
+
+
+
+
 

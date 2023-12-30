@@ -10,6 +10,10 @@ L["frFR"] = {
         ["Rules"] = "Règles >>",
 		["Rolls the dice and get "] = "lance les dés et obtient ",
 		["Rerolls the dice and get "] = "relance les dés et obtient ",
+		["add "] = "ajoute ",
+		["remove "] = "retire ",
+		[" piece(s) to the pot"] = " pièce(s) au pot",
+		[" piece(s) from the pot"] = " pièce(s) du pot",
 		["RuleTextLib"] = [[Il s'agit d'un jeu de Poker aux dés pour deux joueurs et plus.
 L'objectif est de réaliser la meilleure combinaison en deux
 lancers de dés. Le premier joueur est celui celui qui 
