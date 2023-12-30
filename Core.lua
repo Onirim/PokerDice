@@ -210,7 +210,7 @@ decreaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowdown")
 
 
 ------------------------
---   GESTION DU POT   --
+-- AFFICHAGE DU POT   --
 ------------------------
 
 -- Création du cadre pour le pot
@@ -236,6 +236,16 @@ potText:SetText("0") -- Initialisé à 0 par défaut
 local timer
 local piecesMovedToPot = 0
 
+-- Création d'une fonction pour afficher un texte en fondu
+local function showFadeOutText(frame, text)
+    local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
+    fadeOutText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
+    fadeOutText:SetPoint("TOP", potFrame, "TOP", 20, 0)
+    fadeOutText:SetText(text)
+    fadeOutText:SetTextColor(1, 1, 1)
+    UIFrameFadeOut(fadeOutText, 2, 1, 0) -- Fait disparaître le texte en 2 secondes
+end
+
 -- Modification des boutons pour augmenter et diminuer le nombre de pièces d'or
 increaseButton:SetScript("OnClick", function()
     local gold = tonumber(goldText:GetText())
@@ -244,6 +254,7 @@ increaseButton:SetScript("OnClick", function()
         goldText:SetText(gold - 1)
         potText:SetText(pot + 1)
         piecesMovedToPot = piecesMovedToPot + 1
+		showFadeOutText(goldFrame, "+1")
 		PlaySound(125355)
 		
 		-- Annulation du timer précédent
@@ -275,6 +286,7 @@ decreaseButton:SetScript("OnClick", function()
         goldText:SetText(gold + 1)
         potText:SetText(pot - 1)
         piecesMovedToPot = piecesMovedToPot - 1
+		showFadeOutText(goldFrame, "-1")
 		PlaySound(125355)
 		
 		-- Annulation du timer précédent
@@ -317,9 +329,13 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
         if action == "ADD" then
             local pot = tonumber(potText:GetText())
             potText:SetText(pot + amount)
+			showFadeOutText(goldFrame, "+" .. amount)
+			PlaySound(125355)
         elseif action == "REMOVE" then
             local pot = tonumber(potText:GetText())
             potText:SetText(pot - amount)
+			showFadeOutText(goldFrame, "-" .. amount)
+			PlaySound(125355)
         end
     end
 end)
