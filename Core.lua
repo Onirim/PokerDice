@@ -2,6 +2,9 @@
 local _, core = ...
 local L = core.Locales[GetLocale()] or core.Locales["enUS"]
 
+-- Enregistrement du préfixe de l'addon
+C_ChatInfo.RegisterAddonMessagePrefix("PokerDice")
+
 
 -- Création de la fenêtre principale
 local PokerdiceFrame = CreateFrame("Frame", "PokerdiceFrame", UIParent, "BasicFrameTemplateWithInset")
@@ -18,7 +21,7 @@ PokerdiceFrame:Hide()
 local title = PokerdiceFrame:CreateFontString(nil, "OVERLAY")
 title:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 title:SetPoint("TOP", PokerdiceFrame, "TOP", 0, -5)
-title:SetText("Poker dice")
+title:SetText("PokerDice")
 
 -- Ajoutez une variable pour suivre si une relance a déjà été effectuée
 local isReroll = false
@@ -252,8 +255,13 @@ increaseButton:SetScript("OnClick", function()
 		timer = C_Timer.NewTimer(5, function()
 			if piecesMovedToPot > 0 then
 				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
 			elseif piecesMovedToPot < 0 then
 				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
+				
 			end
 			piecesMovedToPot = 0
 		end)
@@ -278,10 +286,45 @@ decreaseButton:SetScript("OnClick", function()
 		timer = C_Timer.NewTimer(5, function()
 			if piecesMovedToPot > 0 then
 				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
 			elseif piecesMovedToPot < 0 then
 				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+				local channel = IsInRaid() and "RAID" or "PARTY"
+				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
 			end
 			piecesMovedToPot = 0
 		end)
     end
 end)
+
+-- Création d'un cadre pour gérer les événements
+local eventFrame = CreateFrame("Frame")
+
+-- Enregistrement de l'événement "CHAT_MSG_ADDON"
+eventFrame:RegisterEvent("CHAT_MSG_ADDON")
+
+-- Définition du gestionnaire d'événements
+eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, sender)
+    if event == "CHAT_MSG_ADDON" and prefix == "PokerDice" then
+        -- Ignore les messages envoyés par le joueur lui-même
+        local playerName = UnitName("player") -- Obtient le nom du joueur
+        local senderName = strsplit("-", sender) -- Sépare le nom de l'expéditeur du nom du royaume
+        if senderName == playerName then return end
+
+        local action, amount = strsplit(" ", message)
+        amount = tonumber(amount)
+        if action == "ADD" then
+            local pot = tonumber(potText:GetText())
+            potText:SetText(pot + amount)
+        elseif action == "REMOVE" then
+            local pot = tonumber(potText:GetText())
+            potText:SetText(pot - amount)
+        end
+    end
+end)
+
+
+
+
+
