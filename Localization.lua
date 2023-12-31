@@ -5,6 +5,7 @@ local L = core.Locales
 
 
 L["frFR"] = {
+		["PokerDice is loaded"] = " |cFF808080est chargé. Pour jouer, assurez-vous d'être en groupe ou en raid avec les autres joueurs et tapez la commande /poker",
         ["Roll the dice"] = "Lancer les dés",
 		["Reroll the dice"] = "Relancer ces dés",
         ["Plus"] = "Plus >>",
@@ -36,20 +37,21 @@ fonctionner correctement.
 
 Liste des combinaisons par ordre de valeur :
 
-- POKER : Cinq dés de même valeur
-- CARRÉ : Quatre dés de même valeur
-- FULL : Un brelan + une paire
-- GRANDE SUITE : Suite de dés allant de 2 à 6
-- PETITE SUITE : Suite de dés allant de 1 à 5
-- BRELAN : Trois dés de même valeur
-- DOUBLE PAIRE : Deux paires
-- PAIRE : Deux dés de même valeur
+- |cFFdaa520Poker|r : Cinq dés de même valeur
+- |cFFdaa520Carré|r : Quatre dés de même valeur
+- |cFFdaa520Full|r : Un brelan + une paire
+- |cFFdaa520Grande suite|r : Suite de dés allant de 2 à 6
+- |cFFdaa520Petite suite|r : Suite de dés allant de 1 à 5
+- |cFFdaa520Brelan|r : Trois dés de même valeur
+- |cFFdaa520Double paire|r : Deux paires
+- |cFFdaa520Paire|r : Deux dés de même valeur
 
 Quand les combinaisons sont de valeur identique, celle qui
 comporte les dés les plus hauts est déclarée gagnante !]]
     }
 	
 L["enUS"] = {
+		["PokerDice is loaded"] = " |cFF808080is loaded. For playing, you need to be in the same party or raid as the other players, and type /poker for opening the interface.",
         ["Roll the dice"] = "Roll the dice",
 		["Reroll the dice"] = "Reroll the dice",
         ["Plus"] = "Plus >>",

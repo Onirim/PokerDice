@@ -1,10 +1,23 @@
 -- Gestion de la localisation
 local _, core = ...
 local L = core.Locales[GetLocale()] or core.Locales["enUS"]
+local version = GetAddOnMetadata("PokerDice", "Version")
 
 -- Enregistrement du préfixe de l'addon
 C_ChatInfo.RegisterAddonMessagePrefix("PokerDice")
 
+
+----------------------------
+--   MESSAGE D'ACCUEIL    --
+----------------------------
+local f = CreateFrame("Frame")
+f:RegisterEvent("PLAYER_LOGIN")
+f:SetScript("OnEvent", function()
+    print("|cFFdaa520PokerDice " .. version .. L["PokerDice is loaded"])
+end)
+----------------------------
+--  INTERFACE PRINCIPALE  --
+----------------------------
 
 -- Création de la fenêtre principale
 local PokerdiceFrame = CreateFrame("Frame", "PokerdiceFrame", UIParent, "BasicFrameTemplateWithInset")
