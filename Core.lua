@@ -6,6 +6,13 @@ local version = GetAddOnMetadata("PokerDice", "Version")
 -- Enregistrement du préfixe de l'addon
 C_ChatInfo.RegisterAddonMessagePrefix("PokerDice")
 
+---------------------------
+--   VARIABLES DE JEU    --
+---------------------------
+charGold = 6
+charPenalty = 0
+globalPot = 0
+charBid = 0
 
 ----------------------------
 --   MESSAGE D'ACCUEIL    --
@@ -54,6 +61,9 @@ for i = 1, 5 do
     local diceFrame = CreateFrame("Frame", nil, PokerdiceFrame, "InsetFrameTemplate2")
     diceFrame:SetSize(60, 60)
     diceFrame:SetPoint("TOP", PokerdiceFrame, "TOP", 0, -70 * i)
+	local background = diceFrame:CreateTexture(nil, "BACKGROUND")
+	background:SetAllPoints()
+	background:SetTexture("Interface\\Icons\\6or_garrison_blackiron")
     
     dice[i] = diceFrame:CreateFontString(nil, "OVERLAY")
     dice[i]:SetFont("Fonts\\FRIZQT__.TTF", 32, "OUTLINE")
@@ -208,7 +218,7 @@ background:SetTexture("Interface\\Icons\\inv_misc_bag_10")
 local goldText = goldFrame:CreateFontString(nil, "OVERLAY")
 goldText:SetFont("Fonts\\FRIZQT__.TTF", 36, "OUTLINE")
 goldText:SetPoint("CENTER")
-goldText:SetText("6") -- Initialisé à 6 par défaut
+goldText:SetText(charGold) -- Initialisé à 6 par défaut
 
 -- Création des boutons pour augmenter et diminuer le nombre de pièces d'or
 local increaseButton = CreateFrame("Button", nil, goldFrame)
@@ -241,9 +251,59 @@ potText:SetFont("Fonts\\FRIZQT__.TTF", 40, "OUTLINE")
 potText:SetPoint("CENTER")
 potText:SetText("0") -- Initialisé à 0 par défaut
 
----------------------
--- GESTION DU POT  --
----------------------
+-- Création de la boîte de dialogue de confirmation de récupération du pot
+local ConfirmTakeThePotFrame = CreateFrame("Frame", "ConfirmTakeThePotFrame", potFrame, "BasicFrameTemplate")
+ConfirmTakeThePotFrame:SetSize(400, 100)
+ConfirmTakeThePotFrame:SetPoint("CENTER", potFrame, "CENTER", 300, -10)
+ConfirmTakeThePotFrame:Hide()
+
+local ConfirmTakeThePotText = ConfirmTakeThePotFrame:CreateFontString(nil, "OVERLAY")
+ConfirmTakeThePotText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+ConfirmTakeThePotText:SetPoint("CENTER")
+ConfirmTakeThePotText:SetText(L["Confirm take the pot?"])
+
+local YesTakeThePotButton = CreateFrame("Button", nil, ConfirmTakeThePotFrame, "GameMenuButtonTemplate")
+YesTakeThePotButton:SetPoint("BOTTOMLEFT", ConfirmTakeThePotFrame, "BOTTOM", 10, 10)
+YesTakeThePotButton:SetSize(80, 25)
+YesTakeThePotButton:SetText(L["Yes"])
+YesTakeThePotButton:SetScript("OnClick", function()
+    potText:SetText(0)
+	local channel = IsInRaid() and "RAID" or "PARTY"
+	C_ChatInfo.SendAddonMessage("PokerDice", "RESETPOT", channel)
+	SendChatMessage(L["has taken the pot!"] .. globalPot .. L["coins"] .. "!", "EMOTE")
+	charGold = charGold + globalPot
+	goldText:SetText(charGold)
+	charBid = 0
+	PlaySound(179341)
+    ConfirmTakeThePotFrame:Hide()
+end)
+
+local NoTakeThePotButton = CreateFrame("Button", nil, ConfirmTakeThePotFrame, "GameMenuButtonTemplate")
+NoTakeThePotButton:SetPoint("BOTTOMRIGHT", ConfirmTakeThePotFrame, "BOTTOM", -10, 10)
+NoTakeThePotButton:SetSize(80, 25)
+NoTakeThePotButton:SetText(L["No"])
+NoTakeThePotButton:SetScript("OnClick", function()
+    ConfirmTakeThePotFrame:Hide()
+end)
+
+-- Création du bouton de récupération du pot
+local TakeThePotButton = CreateFrame("Button", nil, potFrame, "GameMenuButtonTemplate")
+TakeThePotButton:SetPoint("TOP", rollButton, "TOP", -148, 200)
+TakeThePotButton:SetSize(130, 30)
+TakeThePotButton:SetText(L["take the pot"])
+TakeThePotButton:SetNormalFontObject("GameFontNormalLarge")
+TakeThePotButton:SetHighlightFontObject("GameFontHighlightLarge")
+TakeThePotButton:SetScript("OnClick", function()
+    if ConfirmTakeThePotFrame:IsShown() then
+        ConfirmTakeThePotFrame:Hide()
+    else
+        ConfirmTakeThePotFrame:Show()
+    end
+end)
+
+------------------------------
+-- GESTION DES GOLD ET POT  --
+------------------------------
 
 -- Création d'une variable pour stocker le timer et le nombre de pièces déplacées vers le pot
 local timer
@@ -253,7 +313,7 @@ local piecesMovedToPot = 0
 local function showFadeOutText(frame, text)
     local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
     fadeOutText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
-    fadeOutText:SetPoint("TOP", potFrame, "TOP", 0, 25)
+    fadeOutText:SetPoint("TOP", potFrame, "TOP", 70, -30)
     fadeOutText:SetText(text)
     fadeOutText:SetTextColor(1, 1, 0)
     UIFrameFadeOut(fadeOutText, 2, 1, 0) -- Fait disparaître le texte en 2 secondes
@@ -266,9 +326,12 @@ increaseButton:SetScript("OnClick", function()
     if gold > 0 then
         goldText:SetText(gold - 1)
         potText:SetText(pot + 1)
+		globalPot = (pot + 1)
         piecesMovedToPot = piecesMovedToPot + 1
+		charBid = charBid +1
 		showFadeOutText(goldFrame, "+1")
 		PlaySound(125355)
+		charGold = tonumber(goldText:GetText())
 		
 		-- Annulation du timer précédent
 		if timer then
@@ -298,9 +361,12 @@ decreaseButton:SetScript("OnClick", function()
     if pot > 0 then
         goldText:SetText(gold + 1)
         potText:SetText(pot - 1)
+		globalPot = (pot - 1)
         piecesMovedToPot = piecesMovedToPot - 1
+		charBid = charBid -1
 		showFadeOutText(goldFrame, "-1")
 		PlaySound(125355)
+		charGold = tonumber(goldText:GetText())
 		
 		-- Annulation du timer précédent
 		if timer then
@@ -320,39 +386,6 @@ decreaseButton:SetScript("OnClick", function()
 			end
 			piecesMovedToPot = 0
 		end)
-    end
-end)
-
--- Création d'un cadre pour gérer les événements
-local eventFrame = CreateFrame("Frame")
-
--- Enregistrement de l'événement "CHAT_MSG_ADDON"
-eventFrame:RegisterEvent("CHAT_MSG_ADDON")
-
--- Définition du gestionnaire d'événements
-eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, sender)
-    if event == "CHAT_MSG_ADDON" and prefix == "PokerDice" then
-        -- Ignore les messages envoyés par le joueur lui-même
-        local playerName = UnitName("player") -- Obtient le nom du joueur
-        local senderName = strsplit("-", sender) -- Sépare le nom de l'expéditeur du nom du royaume
-        if senderName == playerName then return end
-
-        local action, amount = strsplit(" ", message)
-        amount = tonumber(amount)
-        if action == "ADD" then
-            local pot = tonumber(potText:GetText())
-            potText:SetText(pot + amount)
-			showFadeOutText(goldFrame, "+" .. amount)
-			PlaySound(125355)
-        elseif action == "REMOVE" then
-            local pot = tonumber(potText:GetText())
-            potText:SetText(pot - amount)
-			showFadeOutText(goldFrame, "-" .. amount)
-			PlaySound(125355)
-		elseif action == "RESETPOT" then
-			potText:SetText(0)
-			PlaySound(125355)
-        end
     end
 end)
 
@@ -403,6 +436,7 @@ ResetButton:SetScript("OnClick", function()
 end)
 
 -- Création de la boîte de dialogue de confirmation de gage
+
 local ConfirmPenaltyFrame = CreateFrame("Frame", "ConfirmPenaltyFrame", PlusFrame, "BasicFrameTemplate")
 ConfirmPenaltyFrame:SetSize(400, 120)
 ConfirmPenaltyFrame:SetPoint("CENTER", PlusFrame, "CENTER", 100, -110)
@@ -420,7 +454,9 @@ YesPenaltyButton:SetText(L["Yes"])
 YesPenaltyButton:SetScript("OnClick", function()
 	SendChatMessage(L["has accepted a penalty for gaining two coins"], "EMOTE")
 	local gold = tonumber(goldText:GetText())
+	charPenalty = charPenalty +1
 	goldText:SetText(gold + 2)
+	charGold = charGold + 2
     ConfirmPenaltyFrame:Hide()
 end)
 
@@ -442,3 +478,84 @@ PenaltyButton:SetHighlightFontObject("GameFontHighlightSmall")
 PenaltyButton:SetScript("OnClick", function()
     ConfirmPenaltyFrame:Show()
 end)
+
+------------------------
+-- TABLEAU DES SCORES --
+------------------------
+local players = {}
+
+-- Création de la table d'affichage
+local displayTable = PlusFrame:CreateFontString(nil, "OVERLAY")
+displayTable:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+displayTable:SetPoint("TOP", PlusText, "BOTTOM", 0, -10)
+displayTable:SetJustifyH("LEFT")
+displayTable:SetJustifyV("TOP")
+
+-- Mise à jour de la table d'affichage
+local function updateDisplayTable()
+    local displayText = ""
+    for name, player in pairs(players) do
+        displayText = displayText .. "|cFF52BE80" .. name .. "|r : " .. player.tableGold .. L["coins"] .. ", " .. player.tableBid .. L["bid"] .. ", " .. player.tablePenalty .. L["penalty"] .. "\n"
+    end
+    displayTable:SetText(displayText)
+end
+
+
+-- Mise à jour de la table des participants lors de la réception d'un message SYNC
+local function onSyncMessage(name, gold, bid, penalty)
+    players[name] = {tableGold = gold, tableBid = bid, tablePenalty = penalty}
+    updateDisplayTable()
+end
+
+-- Fonction pour envoyer les informations
+local playerName = UnitName("player") -- Obtient le nom du joueur
+local function sendInfo()
+    C_ChatInfo.SendAddonMessage("PokerDice", "SYNC " .. playerName .. " " .. charGold .. " " .. charBid .. " " .. charPenalty, channel)
+end
+
+-- Création du ticker
+local ticker = C_Timer.NewTicker(4, sendInfo)
+
+------------------------------
+-- GESTIONNAIRE D'EVENEMENT --
+------------------------------
+
+-- Création d'un cadre pour gérer les événements
+local eventFrame = CreateFrame("Frame")
+
+-- Enregistrement de l'événement "CHAT_MSG_ADDON"
+eventFrame:RegisterEvent("CHAT_MSG_ADDON")
+
+eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, sender)
+    if event == "CHAT_MSG_ADDON" and prefix == "PokerDice" then
+        -- Ignore les messages envoyés par le joueur lui-même
+        local playerName = UnitName("player") -- Obtient le nom du joueur
+        local senderName = strsplit("-", sender) -- Sépare le nom de l'expéditeur du nom du royaume
+
+		local action, amount = strsplit(" ", message)
+		local sync, name, gold, bid, penalty = strsplit(" ", message)
+        if action == "ADD" and senderName ~= playerName then
+            local pot = tonumber(potText:GetText())
+            potText:SetText(pot + tonumber(amount))
+			showFadeOutText(goldFrame, "+" .. amount)
+			PlaySound(125355)
+			globalPot = (pot + tonumber(amount))
+        elseif action == "REMOVE" and senderName ~= playerName then
+            local pot = tonumber(potText:GetText())
+            potText:SetText(pot - tonumber(amount))
+			showFadeOutText(goldFrame, "-" .. amount)
+			PlaySound(125355)
+			globalPot = (pot - tonumber(amount))
+		elseif action == "RESETPOT" then
+			potText:SetText(0)
+			globalPot = 0
+			charBid = 0
+			PlaySound(125355)
+        elseif sync == "SYNC" then
+            onSyncMessage(name, tonumber(gold), tonumber(bid), tonumber(penalty))
+        end
+    end
+end)
+
+
+

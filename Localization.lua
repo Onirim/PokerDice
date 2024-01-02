@@ -26,6 +26,13 @@ autres joueurs !]],
 		["has accepted a penalty for gaining two coins"] = "a accepté un gage pour gagner deux pièces",
 		["Yes"] = "Oui",
 		["No"] = "Non",
+		["coins"] = " pièce(s) ",
+		["penalty"] = " gage(s)",
+		["take the pot"] = "Gagner le pot",
+		["has taken the pot!"] = "a gagné le pot et récupère ",
+		["bid"] = " pièce(s) misées",
+		["Confirm take the pot?"] = [[Vous êtes sur le point de prendre le contenu du pot !
+Avez-vous gagné la manche ?]],
 		["RuleTextLib"] = [[
 
 
