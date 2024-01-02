@@ -341,11 +341,11 @@ increaseButton:SetScript("OnClick", function()
 		-- Démarrage d'un nouveau timer
 		timer = C_Timer.NewTimer(5, function()
 			if piecesMovedToPot > 0 then
-				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
 				local channel = IsInRaid() and "RAID" or "PARTY"
 				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
 			elseif piecesMovedToPot < 0 then
-				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
 				local channel = IsInRaid() and "RAID" or "PARTY"
 				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
 				
@@ -376,11 +376,11 @@ decreaseButton:SetScript("OnClick", function()
 		-- Démarrage d'un nouveau timer
 		timer = C_Timer.NewTimer(5, function()
 			if piecesMovedToPot > 0 then
-				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" piece(s) to the pot"], "EMOTE")
+				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
 				local channel = IsInRaid() and "RAID" or "PARTY"
 				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
 			elseif piecesMovedToPot < 0 then
-				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" piece(s) from the pot"], "EMOTE")
+				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
 				local channel = IsInRaid() and "RAID" or "PARTY"
 				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
 			end

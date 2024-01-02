@@ -13,8 +13,8 @@ L["frFR"] = {
 		["Rerolls the dice and get "] = "relance les dés et obtient ",
 		["add "] = "ajoute ",
 		["remove "] = "retire ",
-		[" piece(s) to the pot"] = " pièce(s) au pot",
-		[" piece(s) from the pot"] = " pièce(s) du pot",
+		[" coin(s) to the pot"] = " pièce(s) au pot",
+		[" coin(s) from the pot"] = " pièce(s) du pot",
 		["Reset the pot"] = "Réinitialiser le pot",
 		["Confirm reset the pot?"] = [[Souhaitez-vous vraiment réinitialiser le pot ?
 Il sera remis à zéro pour tous les joueurs du groupe !]],
@@ -62,8 +62,8 @@ L["enUS"] = {
         ["Roll the dice"] = "Roll the dice",
 		["Reroll the dice"] = "Reroll the dice",
         ["Plus"] = "Plus >>",
-		["Rolls the dice and get "] = "Rolls the dice and get ",
-		["Rerolls the dice and get "] = "Rerolls the dice and get ",
+		["Rolls the dice and get "] = "rolls the dice and get ",
+		["Rerolls the dice and get "] = "rerolls the dice and get ",
 		["add "] = "add ",
 		["remove "] = "remove ",
 		[" coin(s) to the pot"] = " coin(s) to the pot",
@@ -79,8 +79,16 @@ other players!]],
 		["has accepted a penalty for gaining two coins"] = "has accepted a penalty for gaining two coins",
 		["Yes"] = "Yes",
 		["No"] = "No",
+		["coins"] = " coin(s) ",
+		["penalty"] = " penalty",
+		["take the pot"] = "Take the pot",
+		["has taken the pot!"] = "has taken the pot and gains ",
+		["bid"] = " coin(s) bet",
+		["Confirm take the pot?"] = [[You are about to take the pot and gain all the coins!
+Have you win the round?]],
 		["RuleTextLib"] = [[
-		
+
+
 
 Welcome to PokerDice!
 
@@ -89,14 +97,14 @@ or raid to work properly.
 
 List of combinations in order of value:
 
-- POKER: Five dice of the same value
-- 4-OF-A-KIND: Four dice of the same value
-- FULL HOUSE: A three-of-a-kind + a pair
-- GREAT STRAIGHT: Dice sequence ranging from 2 to 6
-- SMALL STRAIGHT Dice sequence ranging from 1 to 5
-- 3-OF-A-KIND: Three dice of the same value
-- DOUBLE PAIR: Two pairs
-- PAIR: Two dice of the same value
+- |cFFdaa520Poker|r: Five dice of the same value
+- |cFFdaa5204-of-a-Kind|r: Four dice of the same value
+- |cFFdaa520Full House|r: A three-of-a-kind + a pair
+- |cFFdaa520Great Straight|r: Dice sequence ranging from 2 to 6
+- |cFFdaa520Small Straight|r: Dice sequence ranging from 1 to 5
+- |cFFdaa5203-of-a-Kind|r: Three dice of the same value
+- |cFFdaa520Double Pair|r: Two pairs
+- |cFFdaa520Pair|r: Two dice of the same value
 
 When the combinations are of equal value, the one that 
 has the highest dice is declared the winner!]]
