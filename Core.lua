@@ -13,6 +13,8 @@ charGold = 6
 charPenalty = 0
 globalPot = 0
 charBid = 0
+isFirstRoll = true --Est le premier lancer de la manche ?
+isFinished = false --le second lancer de la manche a t-il été fait ?
 
 ----------------------------
 --   MESSAGE D'ACCUEIL    --
@@ -43,8 +45,6 @@ title:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 title:SetPoint("TOP", PokerdiceFrame, "TOP", 0, -5)
 title:SetText("PokerDice")
 
--- Ajoutez une variable pour suivre si une relance a déjà été effectuée
-local isReroll = false
 
 -- Création du bouton de roll
 local rollButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
@@ -74,7 +74,8 @@ for i = 1, 5 do
 
     -- Modification du texte du bouton lors de la sélection d'un dé
     diceFrame:SetScript("OnMouseDown", function()
-        if not isReroll then return end -- Empêche la sélection des dés si isReroll est false
+        if isFirstRoll or isFinished then return end -- Empêche la sélection des dés si isFirstRoll est true
+		rollButton:Enable()
         selected[i] = not selected[i]
         if selected[i] then
             dice[i]:SetTextColor(1, 0, 0) -- Change la couleur en rouge si sélectionné
@@ -107,18 +108,18 @@ rollButton:SetScript("OnClick", function()
         end
     end
 	
-	if isReroll == false or not anySelected then
-        -- Si une relance a déjà été effectuée ou si aucun dé n'est sélectionné, lancez tous les dés
+	if isFirstRoll then
+	-- si c'est le premier lancer de la manche, on lance tous les dés
         for i = 1, 5 do
             dice[i]:SetText(math.random(1, 6))
             selected[i] = false
             dice[i]:SetTextColor(1, 1, 1) -- Change la couleur en blanc
         end
-        if isReroll == false then 
-			isReroll = true
-		else 
-			isReroll = false
-		end
+        isFirstRoll = false
+		rollButton:SetText(L["Selection"])
+		rollButton:Disable()
+	elseif isFirstRoll == false and anySelected == false then
+		rollButton:Disable() -- Désactive le bouton
     else
         -- Sinon, relancez seulement les dés sélectionnés
         for i = 1, 5 do
@@ -128,8 +129,9 @@ rollButton:SetScript("OnClick", function()
                 dice[i]:SetTextColor(1, 1, 1) -- Change la couleur en blanc
             end
         end
-		isReroll = false
-		rollButton:SetText(L["Roll the dice"])
+		rollButton:SetText(L["Finished"])
+		rollButton:Disable()
+		isFinished = true
     end
 	
 	PlaySound(36627)
@@ -141,7 +143,7 @@ rollButton:SetScript("OnClick", function()
     table.sort(results, function(a, b) return a > b end)
     local resultString = table.concat(results, ", ")
     -- Envoie un message différent en fonction de si les dés ont été lancés ou relancés
-    if isReroll == false then
+    if isFirstRoll then
         SendChatMessage(L["Rerolls the dice and get "] .. resultString, "EMOTE")
     else
         SendChatMessage(L["Rolls the dice and get "] .. resultString, "EMOTE")
@@ -274,6 +276,10 @@ YesTakeThePotButton:SetScript("OnClick", function()
 	charGold = charGold + globalPot
 	goldText:SetText(charGold)
 	charBid = 0
+	isFirstRoll = true
+	isFinished = false
+	rollButton:Enable() -- Réactive le bouton
+	rollButton:SetText(L["Roll the dice"])
 	PlaySound(179341)
     ConfirmTakeThePotFrame:Hide()
 end)
@@ -413,6 +419,12 @@ YesResetButton:SetScript("OnClick", function()
 	local channel = IsInRaid() and "RAID" or "PARTY"
 	C_ChatInfo.SendAddonMessage("PokerDice", "RESETPOT", channel)
 	SendChatMessage(L["has reset the pot to zero"], "EMOTE")
+	globalPot = 0
+	charBid = 0
+	isFirstRoll = true
+	isFinished = false
+	rollButton:Enable() -- Réactive le bouton
+	rollButton:SetText(L["Roll the dice"])
     ConfirmResetFrame:Hide()
 end)
 
@@ -550,6 +562,10 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
 			potText:SetText(0)
 			globalPot = 0
 			charBid = 0
+			isFirstRoll = true
+			isFinished = false
+			rollButton:Enable() -- Réactive le bouton
+			rollButton:SetText(L["Roll the dice"])
 			PlaySound(125355)
         elseif sync == "SYNC" then
             onSyncMessage(name, tonumber(gold), tonumber(bid), tonumber(penalty))
