@@ -1,11 +1,9 @@
-This is a dice poker game for two or more players who works when the players are in the same party or raid.
+This is a dice poker game for two or more players who works when the players are in the same party or raid group.
 The objective is to achieve the best combination in two dice rolls. The first player is the one who won the previous round. A normal game is played with six pieces per player.
 
- 
-
 - Everyone starts by betting one coin.
-- Then the players all make a first roll of the dice, in clockwise order.
-- Starting with the first player, each player can announce if they increase the bet by an additional piece. In this case, everyone who wants to follow must also bet one more piece. Players who do not follow fold and drop out of the round, losing their bet. The bet can only be increased once per round, for all players.
+- Then the players all make a first roll of the dice.
+- Each player can announce if they increase the bet by an additional piece and continue the round, or fold and drop out of the round, losing their bet.
 - When everyone has followed or folded, each player selects the dice they wish to reroll, then rerolls them.
 - The combination of the highest value wins and the winner takes the pot!
 
