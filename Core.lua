@@ -29,7 +29,9 @@ end)
 ----------------------------
 
 -- Création de la fenêtre principale
-local PokerdiceFrame = CreateFrame("Frame", "PokerdiceFrame", UIParent, "BasicFrameTemplateWithInset")
+local PokerdiceFrame = CreateFrame("Frame", "PokerdiceFrame", UIParent, "ButtonFrameTemplate")
+PokerdiceFrame:SetPortraitToAsset("Interface\\ICONS\\misc_rune_pvp_random")
+ButtonFrameTemplate_HideButtonBar(PokerdiceFrame)
 PokerdiceFrame:SetSize(200, 470) 
 PokerdiceFrame:SetPoint("CENTER") 
 PokerdiceFrame:EnableMouse(true)
@@ -37,7 +39,10 @@ PokerdiceFrame:SetMovable(true)
 PokerdiceFrame:RegisterForDrag("LeftButton")
 PokerdiceFrame:SetScript("OnDragStart", PokerdiceFrame.StartMoving)
 PokerdiceFrame:SetScript("OnDragStop", PokerdiceFrame.StopMovingOrSizing)
+PokerdiceFrame:SetFrameStrata("BACKGROUND")
 PokerdiceFrame:Hide()
+
+
 
 -- Création du titre
 local title = PokerdiceFrame:CreateFontString(nil, "OVERLAY")
@@ -48,7 +53,7 @@ title:SetText("PokerDice")
 
 -- Création du bouton de roll
 local rollButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
-rollButton:SetPoint("TOP", PokerdiceFrame, "BOTTOM", 0, 30)
+rollButton:SetPoint("TOP", PokerdiceFrame, "BOTTOM", 0, 47)
 rollButton:SetSize(150, 40)
 rollButton:SetText(L["Roll the dice"])
 rollButton:SetNormalFontObject("GameFontNormalLarge")
@@ -188,9 +193,9 @@ local rulesText = L["RuleTextLib"]
 PlusText:SetText(rulesText)
 
 
--- Création du bouton des règles
+-- Création du bouton plus
 local PlusButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
-PlusButton:SetPoint("TOP", rollButton, "TOP", 42, 415)
+PlusButton:SetPoint("TOP", rollButton, "TOP", 42, 394)
 PlusButton:SetSize(100, 25)
 PlusButton:SetText(L["Plus"])
 PlusButton:SetNormalFontObject("GameFontNormalSmall")
@@ -210,7 +215,7 @@ end)
 -- Création du cadre pour les pièces d'or
 local goldFrame = CreateFrame("Frame", nil, PokerdiceFrame)
 goldFrame:SetSize(80, 80)
-goldFrame:SetPoint("RIGHT", PokerdiceFrame, "LEFT", 10, -195)
+goldFrame:SetPoint("RIGHT", PokerdiceFrame, "LEFT", -2, -195)
 
 -- Ajout de l'icône en fond
 local background = goldFrame:CreateTexture(nil, "BACKGROUND")
@@ -241,7 +246,7 @@ decreaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowdown")
 -- Création du cadre pour le pot
 local potFrame = CreateFrame("Frame", nil, PokerdiceFrame)
 potFrame:SetSize(110, 110)
-potFrame:SetPoint("RIGHT", goldFrame, "RIGHT", 0, 125)
+potFrame:SetPoint("RIGHT", goldFrame, "RIGHT", 1, 125)
 
 -- Ajout de l'icône en fond
 local potBackground = potFrame:CreateTexture(nil, "BACKGROUND")
@@ -258,6 +263,7 @@ local ConfirmTakeThePotFrame = CreateFrame("Frame", "ConfirmTakeThePotFrame", po
 ConfirmTakeThePotFrame:SetSize(400, 100)
 ConfirmTakeThePotFrame:SetPoint("CENTER", potFrame, "CENTER", 300, -10)
 ConfirmTakeThePotFrame:Hide()
+ConfirmTakeThePotFrame:SetFrameStrata("HIGH")
 
 local ConfirmTakeThePotText = ConfirmTakeThePotFrame:CreateFontString(nil, "OVERLAY")
 ConfirmTakeThePotText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
@@ -294,7 +300,7 @@ end)
 
 -- Création du bouton de récupération du pot
 local TakeThePotButton = CreateFrame("Button", nil, potFrame, "GameMenuButtonTemplate")
-TakeThePotButton:SetPoint("TOP", rollButton, "TOP", -148, 200)
+TakeThePotButton:SetPoint("TOP", rollButton, "TOP", -165, 200)
 TakeThePotButton:SetSize(130, 30)
 TakeThePotButton:SetText(L["take the pot"])
 TakeThePotButton:SetNormalFontObject("GameFontNormalLarge")
@@ -319,7 +325,7 @@ local piecesMovedToPot = 0
 local function showFadeOutText(frame, text)
     local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
     fadeOutText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
-    fadeOutText:SetPoint("TOP", potFrame, "TOP", 70, -30)
+    fadeOutText:SetPoint("TOP", potFrame, "TOP", 90, -30)
     fadeOutText:SetText(text)
     fadeOutText:SetTextColor(1, 1, 0)
     UIFrameFadeOut(fadeOutText, 2, 1, 0) -- Fait disparaître le texte en 2 secondes

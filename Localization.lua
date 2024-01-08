@@ -39,6 +39,7 @@ Avez-vous gagné la manche ?]],
 
 
 
+
 Bienvenue sur PokerDice !
 
 Cet add-on nécessite que les joueurs soient en groupe pour
