@@ -35,6 +35,7 @@ autres joueurs !]],
 		["bid"] = " pièce(s) misées",
 		["Confirm take the pot?"] = [[Vous êtes sur le point de prendre le contenu du pot !
 Avez-vous gagné la manche ?]],
+		["Need to be in party"] = " |cFFFC3232Vous devez être en groupe pour jouer à PokerDice !",
 		["RuleTextLib"] = [[
 
 
@@ -91,6 +92,7 @@ other players!]],
 		["bid"] = " coin(s) bet",
 		["Confirm take the pot?"] = [[You are about to take the pot and gain all the coins!
 Have you win the round?]],
+		["Need to be in party"] = "|cFFFC3232You need to be in party for playing PokerDice!",
 		["RuleTextLib"] = [[
 
 

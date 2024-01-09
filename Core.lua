@@ -34,6 +34,7 @@ PokerdiceFrame:SetPortraitToAsset("Interface\\ICONS\\misc_rune_pvp_random")
 ButtonFrameTemplate_HideButtonBar(PokerdiceFrame)
 PokerdiceFrame:SetSize(200, 470) 
 PokerdiceFrame:SetPoint("CENTER") 
+PokerdiceFrame:SetTitle("PokerDice")
 PokerdiceFrame:EnableMouse(true)
 PokerdiceFrame:SetMovable(true)
 PokerdiceFrame:RegisterForDrag("LeftButton")
@@ -41,15 +42,6 @@ PokerdiceFrame:SetScript("OnDragStart", PokerdiceFrame.StartMoving)
 PokerdiceFrame:SetScript("OnDragStop", PokerdiceFrame.StopMovingOrSizing)
 PokerdiceFrame:SetFrameStrata("BACKGROUND")
 PokerdiceFrame:Hide()
-
-
-
--- Création du titre
-local title = PokerdiceFrame:CreateFontString(nil, "OVERLAY")
-title:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
-title:SetPoint("TOP", PokerdiceFrame, "TOP", 0, -5)
-title:SetText("PokerDice")
-
 
 -- Création du bouton de roll
 local rollButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
@@ -508,6 +500,7 @@ displayTable:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
 displayTable:SetPoint("TOP", PlusText, "BOTTOM", 0, -10)
 displayTable:SetJustifyH("LEFT")
 displayTable:SetJustifyV("TOP")
+displayTable:SetText(L["Need to be in party"])
 
 -- Mise à jour de la table d'affichage
 local function updateDisplayTable()
