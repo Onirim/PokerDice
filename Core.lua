@@ -33,7 +33,7 @@ local PokerdiceFrame = CreateFrame("Frame", "PokerdiceFrame", UIParent, "ButtonF
 PokerdiceFrame:SetPortraitToAsset("Interface\\ICONS\\misc_rune_pvp_random")
 ButtonFrameTemplate_HideButtonBar(PokerdiceFrame)
 PokerdiceFrame:SetSize(200, 470) 
-PokerdiceFrame:SetPoint("CENTER") 
+PokerdiceFrame:SetPoint("LEFT", UIParent, "LEFT", 200, 0)
 PokerdiceFrame:SetTitle("PokerDice")
 PokerdiceFrame:EnableMouse(true)
 PokerdiceFrame:SetMovable(true)
@@ -50,6 +50,8 @@ rollButton:SetSize(150, 40)
 rollButton:SetText(L["Roll the dice"])
 rollButton:SetNormalFontObject("GameFontNormalLarge")
 rollButton:SetHighlightFontObject("GameFontHighlightLarge")
+rollButton:Disable()
+rollButton:SetText(L["Bid first!"])
 
 -- Création des dés
 local dice = {}
@@ -71,7 +73,7 @@ for i = 1, 5 do
 
     -- Modification du texte du bouton lors de la sélection d'un dé
     diceFrame:SetScript("OnMouseDown", function()
-        if isFirstRoll or isFinished then return end -- Empêche la sélection des dés si isFirstRoll est true
+        if isFirstRoll or isFinished or charBid == 1 then return end -- Empêche la sélection des dés si isFirstRoll est true
 		rollButton:Enable()
         selected[i] = not selected[i]
         if selected[i] then
@@ -89,64 +91,12 @@ for i = 1, 5 do
             end
             -- Si aucun autre dé n'est sélectionné, changez le texte du bouton
             if not anotherSelected then
-                rollButton:SetText(L["Roll the dice"])
+                rollButton:SetText(L["Selection"])
+				rollButton:Disable()
             end
         end
     end)
 end
-
-rollButton:SetScript("OnClick", function()
-    -- Vérifie si au moins un dé est sélectionné
-    local anySelected = false
-    for i = 1, 5 do
-        if selected[i] then
-            anySelected = true
-            break
-        end
-    end
-	
-	if isFirstRoll then
-	-- si c'est le premier lancer de la manche, on lance tous les dés
-        for i = 1, 5 do
-            dice[i]:SetText(math.random(1, 6))
-            selected[i] = false
-            dice[i]:SetTextColor(1, 1, 1) -- Change la couleur en blanc
-        end
-        isFirstRoll = false
-		rollButton:SetText(L["Selection"])
-		rollButton:Disable()
-	elseif isFirstRoll == false and anySelected == false then
-		rollButton:Disable() -- Désactive le bouton
-    else
-        -- Sinon, relancez seulement les dés sélectionnés
-        for i = 1, 5 do
-            if selected[i] then
-                dice[i]:SetText(math.random(1, 6))
-                selected[i] = false
-                dice[i]:SetTextColor(1, 1, 1) -- Change la couleur en blanc
-            end
-        end
-		rollButton:SetText(L["Finished"])
-		rollButton:Disable()
-		isFinished = true
-    end
-	
-	PlaySound(36627)
-
-	local results = {}
-    for i = 1, 5 do
-        table.insert(results, tonumber(dice[i]:GetText()))
-    end
-    table.sort(results, function(a, b) return a > b end)
-    local resultString = table.concat(results, ", ")
-    -- Envoie un message différent en fonction de si les dés ont été lancés ou relancés
-    if isFirstRoll then
-        SendChatMessage(L["Rerolls the dice and get "] .. resultString, "EMOTE")
-    else
-        SendChatMessage(L["Rolls the dice and get "] .. resultString, "EMOTE")
-    end
-end)
-
 
 
 
@@ -219,16 +169,10 @@ goldText:SetFont("Fonts\\FRIZQT__.TTF", 36, "OUTLINE")
 goldText:SetPoint("CENTER")
 goldText:SetText(charGold) -- Initialisé à 6 par défaut
 
--- Création des boutons pour augmenter et diminuer le nombre de pièces d'or
-local increaseButton = CreateFrame("Button", nil, goldFrame)
-increaseButton:SetSize(35, 35)
-increaseButton:SetPoint("LEFT", goldFrame, "RIGHT", -40, 55)
-increaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowlup")
-
-local decreaseButton = CreateFrame("Button", nil, goldFrame)
-decreaseButton:SetSize(35, 35)
-decreaseButton:SetPoint("LEFT", goldFrame, "LEFT", 5, 55)
-decreaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowdown")
+-- local decreaseButton = CreateFrame("Button", nil, goldFrame)
+-- decreaseButton:SetSize(35, 35)
+-- decreaseButton:SetPoint("LEFT", goldFrame, "LEFT", 5, 55)
+-- decreaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowdown")
 
 
 ------------------------
@@ -249,6 +193,69 @@ local potText = potFrame:CreateFontString(nil, "OVERLAY")
 potText:SetFont("Fonts\\FRIZQT__.TTF", 40, "OUTLINE")
 potText:SetPoint("CENTER")
 potText:SetText("0") -- Initialisé à 0 par défaut
+
+-- Création du bouton de récupération du pot
+local TakeThePotButton = CreateFrame("Button", nil, potFrame, "GameMenuButtonTemplate")
+TakeThePotButton:SetPoint("TOP", rollButton, "TOP", -156, 198)
+TakeThePotButton:SetSize(110, 30)
+TakeThePotButton:SetText(L["take the pot"])
+TakeThePotButton:SetNormalFontObject("GameFontNormal")
+TakeThePotButton:SetHighlightFontObject("GameFontHighlight")
+TakeThePotButton:Disable()
+TakeThePotButton:SetScript("OnClick", function()
+    if ConfirmTakeThePotFrame:IsShown() then
+        ConfirmTakeThePotFrame:Hide()
+    else
+        ConfirmTakeThePotFrame:Show()
+    end
+end)
+
+------------------------------
+-- GESTION DES GOLD ET POT  --
+------------------------------
+
+-- Création d'une variable pour stocker le timer et le nombre de pièces déplacées vers le pot
+-- local timer
+-- local piecesMovedToPot = 0
+
+-- Création d'une fonction pour afficher un texte en fondu
+local function showFadeOutText(frame, text)
+    local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
+    fadeOutText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
+    fadeOutText:SetPoint("TOP", potFrame, "TOP", 90, -30)
+    fadeOutText:SetText(text)
+    fadeOutText:SetTextColor(1, 1, 0)
+    UIFrameFadeOut(fadeOutText, 2, 1, 0) -- Fait disparaître le texte en 2 secondes
+end
+
+-- Création du bouton de mise
+local bidButton = CreateFrame("Button", nil, goldFrame, "GameMenuButtonTemplate")
+bidButton:SetSize(80, 30)
+bidButton:SetPoint("LEFT", goldFrame, "RIGHT", -80, 50)
+bidButton:SetText("Miser")
+bidButton:SetNormalFontObject("GameFontNormal")
+bidButton:SetHighlightFontObject("GameFontHighlight")
+bidButton:SetScript("OnClick", function()
+    local gold = tonumber(goldText:GetText())
+    local pot = tonumber(potText:GetText())
+    goldText:SetText(gold - 1)
+    potText:SetText(pot + 1)
+	charBid = charBid + 1
+	globalPot = (pot + 1)
+	showFadeOutText(goldFrame, "+1")
+	PlaySound(125355)
+	charGold = tonumber(goldText:GetText())
+	SendChatMessage(L["add a coin to the pot"], "EMOTE")
+	local channel = IsInRaid() and "RAID" or "PARTY"
+	C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. 1, channel)
+	if isFirstRoll == true then
+		rollButton:Enable()
+		rollButton:SetText(L["Roll the dice"])
+	else 
+		rollButton:SetText(L["Selection"])
+	end
+	bidButton:Disable()
+end)
 
 -- Création de la boîte de dialogue de confirmation de récupération du pot
 local ConfirmTakeThePotFrame = CreateFrame("Frame", "ConfirmTakeThePotFrame", potFrame, "BasicFrameTemplate")
@@ -276,10 +283,11 @@ YesTakeThePotButton:SetScript("OnClick", function()
 	charBid = 0
 	isFirstRoll = true
 	isFinished = false
-	rollButton:Enable() -- Réactive le bouton
-	rollButton:SetText(L["Roll the dice"])
 	PlaySound(179341)
     ConfirmTakeThePotFrame:Hide()
+	rollButton:SetText(L["Bid first!"])
+	bidButton:Enable()
+	TakeThePotButton:Disable()
 end)
 
 local NoTakeThePotButton = CreateFrame("Button", nil, ConfirmTakeThePotFrame, "GameMenuButtonTemplate")
@@ -290,108 +298,75 @@ NoTakeThePotButton:SetScript("OnClick", function()
     ConfirmTakeThePotFrame:Hide()
 end)
 
--- Création du bouton de récupération du pot
-local TakeThePotButton = CreateFrame("Button", nil, potFrame, "GameMenuButtonTemplate")
-TakeThePotButton:SetPoint("TOP", rollButton, "TOP", -165, 200)
-TakeThePotButton:SetSize(130, 30)
-TakeThePotButton:SetText(L["take the pot"])
-TakeThePotButton:SetNormalFontObject("GameFontNormalLarge")
-TakeThePotButton:SetHighlightFontObject("GameFontHighlightLarge")
-TakeThePotButton:SetScript("OnClick", function()
-    if ConfirmTakeThePotFrame:IsShown() then
-        ConfirmTakeThePotFrame:Hide()
-    else
-        ConfirmTakeThePotFrame:Show()
-    end
-end)
-
-------------------------------
--- GESTION DES GOLD ET POT  --
-------------------------------
-
--- Création d'une variable pour stocker le timer et le nombre de pièces déplacées vers le pot
-local timer
-local piecesMovedToPot = 0
-
--- Création d'une fonction pour afficher un texte en fondu
-local function showFadeOutText(frame, text)
-    local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
-    fadeOutText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
-    fadeOutText:SetPoint("TOP", potFrame, "TOP", 90, -30)
-    fadeOutText:SetText(text)
-    fadeOutText:SetTextColor(1, 1, 0)
-    UIFrameFadeOut(fadeOutText, 2, 1, 0) -- Fait disparaître le texte en 2 secondes
-end
-
 -- Modification des boutons pour augmenter et diminuer le nombre de pièces d'or
-increaseButton:SetScript("OnClick", function()
-    local gold = tonumber(goldText:GetText())
-    local pot = tonumber(potText:GetText())
-    if gold > 0 then
-        goldText:SetText(gold - 1)
-        potText:SetText(pot + 1)
-		globalPot = (pot + 1)
-        piecesMovedToPot = piecesMovedToPot + 1
-		charBid = charBid +1
-		showFadeOutText(goldFrame, "+1")
-		PlaySound(125355)
-		charGold = tonumber(goldText:GetText())
+-- increaseButton:SetScript("OnClick", function()
+    -- local gold = tonumber(goldText:GetText())
+    -- local pot = tonumber(potText:GetText())
+    -- if gold > 0 then
+        -- goldText:SetText(gold - 1)
+        -- potText:SetText(pot + 1)
+		-- globalPot = (pot + 1)
+        -- piecesMovedToPot = piecesMovedToPot + 1
+		-- charBid = charBid +1
+		-- showFadeOutText(goldFrame, "+1")
+		-- PlaySound(125355)
+		-- charGold = tonumber(goldText:GetText())
 		
 		-- Annulation du timer précédent
-		if timer then
-			timer:Cancel()
-		end
+		-- if timer then
+			-- timer:Cancel()
+		-- end
 		
 		-- Démarrage d'un nouveau timer
-		timer = C_Timer.NewTimer(5, function()
-			if piecesMovedToPot > 0 then
-				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
-				local channel = IsInRaid() and "RAID" or "PARTY"
-				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
-			elseif piecesMovedToPot < 0 then
-				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
-				local channel = IsInRaid() and "RAID" or "PARTY"
-				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
+		-- timer = C_Timer.NewTimer(5, function()
+			-- if piecesMovedToPot > 0 then
+				-- SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
+				-- local channel = IsInRaid() and "RAID" or "PARTY"
+				-- C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
+			-- elseif piecesMovedToPot < 0 then
+				-- SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
+				-- local channel = IsInRaid() and "RAID" or "PARTY"
+				-- C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
 				
-			end
-			piecesMovedToPot = 0
-		end)
-    end
-end)
+			-- end
+			-- piecesMovedToPot = 0
+		-- end)
+    -- end
+-- end)
 
-decreaseButton:SetScript("OnClick", function()
-    local gold = tonumber(goldText:GetText())
-    local pot = tonumber(potText:GetText())
-    if pot > 0 then
-        goldText:SetText(gold + 1)
-        potText:SetText(pot - 1)
-		globalPot = (pot - 1)
-        piecesMovedToPot = piecesMovedToPot - 1
-		charBid = charBid -1
-		showFadeOutText(goldFrame, "-1")
-		PlaySound(125355)
-		charGold = tonumber(goldText:GetText())
+-- decreaseButton:SetScript("OnClick", function()
+    -- local gold = tonumber(goldText:GetText())
+    -- local pot = tonumber(potText:GetText())
+    -- if pot > 0 then
+        -- goldText:SetText(gold + 1)
+        -- potText:SetText(pot - 1)
+		-- globalPot = (pot - 1)
+        -- piecesMovedToPot = piecesMovedToPot - 1
+		-- charBid = charBid -1
+		-- showFadeOutText(goldFrame, "-1")
+		-- PlaySound(125355)
+		-- charGold = tonumber(goldText:GetText())
 		
 		-- Annulation du timer précédent
-		if timer then
-			timer:Cancel()
-		end
+		-- if timer then
+			-- timer:Cancel()
+		-- end
 		
 		-- Démarrage d'un nouveau timer
-		timer = C_Timer.NewTimer(5, function()
-			if piecesMovedToPot > 0 then
-				SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
-				local channel = IsInRaid() and "RAID" or "PARTY"
-				C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
-			elseif piecesMovedToPot < 0 then
-				SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
-				local channel = IsInRaid() and "RAID" or "PARTY"
-				C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
-			end
-			piecesMovedToPot = 0
-		end)
-    end
-end)
+		-- timer = C_Timer.NewTimer(5, function()
+			-- if piecesMovedToPot > 0 then
+				-- SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
+				-- local channel = IsInRaid() and "RAID" or "PARTY"
+				-- C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
+			-- elseif piecesMovedToPot < 0 then
+				-- SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
+				-- local channel = IsInRaid() and "RAID" or "PARTY"
+				-- C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
+			-- end
+			-- piecesMovedToPot = 0
+		-- end)
+    -- end
+-- end)
 
 ------------------------
 -- BOUTONS OPTIONNELS --
@@ -467,6 +442,8 @@ YesPenaltyButton:SetScript("OnClick", function()
 	charPenalty = charPenalty +1
 	goldText:SetText(gold + 2)
 	charGold = charGold + 2
+	showFadeOutText(goldFrame, "+2")
+	PlaySound(125355)
     ConfirmPenaltyFrame:Hide()
 end)
 
@@ -527,6 +504,66 @@ end
 -- Création du ticker
 local ticker = C_Timer.NewTicker(4, sendInfo)
 
+---------------------------
+-- LANCEMENT DES DES ------
+---------------------------
+
+
+rollButton:SetScript("OnClick", function()
+    -- Vérifie si au moins un dé est sélectionné
+    local anySelected = false
+    for i = 1, 5 do
+        if selected[i] then
+            anySelected = true
+            break
+        end
+    end
+	
+	if isFirstRoll then
+	-- si c'est le premier lancer de la manche, on lance tous les dés
+        for i = 1, 5 do
+            dice[i]:SetText(math.random(1, 6))
+            selected[i] = false
+            dice[i]:SetTextColor(1, 1, 1) -- Change la couleur en blanc
+        end
+        isFirstRoll = false
+		rollButton:SetText(L["Raise"] .. "?")
+		rollButton:Disable()
+		TakeThePotButton:Enable()
+		bidButton:Enable()
+		bidButton:SetText(L["Raise"])
+	elseif isFirstRoll == false and anySelected == false then
+		rollButton:Disable() -- Désactive le bouton
+    else
+        -- Sinon, relancez seulement les dés sélectionnés
+        for i = 1, 5 do
+            if selected[i] then
+                dice[i]:SetText(math.random(1, 6))
+                selected[i] = false
+                dice[i]:SetTextColor(1, 1, 1) -- Change la couleur en blanc
+            end
+        end
+		rollButton:SetText(L["Finished"])
+		rollButton:Disable()
+		isFinished = true
+    end
+	
+	PlaySound(36627)
+
+	local results = {}
+    for i = 1, 5 do
+        table.insert(results, tonumber(dice[i]:GetText()))
+    end
+    table.sort(results, function(a, b) return a > b end)
+    local resultString = table.concat(results, ", ")
+    -- Envoie un message différent en fonction de si les dés ont été lancés ou relancés
+    if isFirstRoll then
+        SendChatMessage(L["Rerolls the dice and get "] .. resultString, "EMOTE")
+    else
+        SendChatMessage(L["Rolls the dice and get "] .. resultString, "EMOTE")
+    end
+end)
+
 ------------------------------
 -- GESTIONNAIRE D'EVENEMENT --
 ------------------------------
@@ -542,7 +579,6 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
         -- Ignore les messages envoyés par le joueur lui-même
         local playerName = UnitName("player") -- Obtient le nom du joueur
         local senderName = strsplit("-", sender) -- Sépare le nom de l'expéditeur du nom du royaume
-
 		local action, amount = strsplit(" ", message)
 		local sync, name, gold, bid, penalty = strsplit(" ", message)
         if action == "ADD" and senderName ~= playerName then
@@ -551,21 +587,17 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
 			showFadeOutText(goldFrame, "+" .. amount)
 			PlaySound(125355)
 			globalPot = (pot + tonumber(amount))
-        elseif action == "REMOVE" and senderName ~= playerName then
-            local pot = tonumber(potText:GetText())
-            potText:SetText(pot - tonumber(amount))
-			showFadeOutText(goldFrame, "-" .. amount)
-			PlaySound(125355)
-			globalPot = (pot - tonumber(amount))
 		elseif action == "RESETPOT" then
 			potText:SetText(0)
 			globalPot = 0
 			charBid = 0
 			isFirstRoll = true
 			isFinished = false
-			rollButton:Enable() -- Réactive le bouton
-			rollButton:SetText(L["Roll the dice"])
+			rollButton:Disable() -- Réactive le bouton
+			rollButton:SetText(L["Bid first!"])
+			bidButton:Enable()
 			PlaySound(125355)
+			TakeThePotButton:Disable()
         elseif sync == "SYNC" then
             onSyncMessage(name, tonumber(gold), tonumber(bid), tonumber(penalty))
         end
