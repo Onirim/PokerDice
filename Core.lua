@@ -2,6 +2,7 @@
 local _, core = ...
 local L = core.Locales[GetLocale()] or core.Locales["enUS"]
 local version = GetAddOnMetadata("PokerDice", "Version")
+--L = core.Locales["enUS"] -- pour test uniquement, doit être commenté sinon
 
 -- Enregistrement du préfixe de l'addon
 C_ChatInfo.RegisterAddonMessagePrefix("PokerDice")
@@ -51,7 +52,7 @@ rollButton:SetText(L["Roll the dice"])
 rollButton:SetNormalFontObject("GameFontNormalLarge")
 rollButton:SetHighlightFontObject("GameFontHighlightLarge")
 rollButton:Disable()
-rollButton:SetText(L["Bid first!"])
+rollButton:SetText(L["Bet first!"])
 
 -- Création des dés
 local dice = {}
@@ -169,12 +170,6 @@ goldText:SetFont("Fonts\\FRIZQT__.TTF", 36, "OUTLINE")
 goldText:SetPoint("CENTER")
 goldText:SetText(charGold) -- Initialisé à 6 par défaut
 
--- local decreaseButton = CreateFrame("Button", nil, goldFrame)
--- decreaseButton:SetSize(35, 35)
--- decreaseButton:SetPoint("LEFT", goldFrame, "LEFT", 5, 55)
--- decreaseButton:SetNormalTexture("Interface\\Icons\\misc_arrowdown")
-
-
 ------------------------
 -- AFFICHAGE DU POT   --
 ------------------------
@@ -214,10 +209,6 @@ end)
 -- GESTION DES GOLD ET POT  --
 ------------------------------
 
--- Création d'une variable pour stocker le timer et le nombre de pièces déplacées vers le pot
--- local timer
--- local piecesMovedToPot = 0
-
 -- Création d'une fonction pour afficher un texte en fondu
 local function showFadeOutText(frame, text)
     local fadeOutText = frame:CreateFontString(nil, "OVERLAY")
@@ -232,7 +223,7 @@ end
 local bidButton = CreateFrame("Button", nil, goldFrame, "GameMenuButtonTemplate")
 bidButton:SetSize(80, 30)
 bidButton:SetPoint("LEFT", goldFrame, "RIGHT", -80, 50)
-bidButton:SetText("Miser")
+bidButton:SetText(L["Bet"])
 bidButton:SetNormalFontObject("GameFontNormal")
 bidButton:SetHighlightFontObject("GameFontHighlight")
 bidButton:SetScript("OnClick", function()
@@ -285,7 +276,7 @@ YesTakeThePotButton:SetScript("OnClick", function()
 	isFinished = false
 	PlaySound(179341)
     ConfirmTakeThePotFrame:Hide()
-	rollButton:SetText(L["Bid first!"])
+	rollButton:SetText(L["Bet first!"])
 	bidButton:Enable()
 	TakeThePotButton:Disable()
 end)
@@ -298,75 +289,7 @@ NoTakeThePotButton:SetScript("OnClick", function()
     ConfirmTakeThePotFrame:Hide()
 end)
 
--- Modification des boutons pour augmenter et diminuer le nombre de pièces d'or
--- increaseButton:SetScript("OnClick", function()
-    -- local gold = tonumber(goldText:GetText())
-    -- local pot = tonumber(potText:GetText())
-    -- if gold > 0 then
-        -- goldText:SetText(gold - 1)
-        -- potText:SetText(pot + 1)
-		-- globalPot = (pot + 1)
-        -- piecesMovedToPot = piecesMovedToPot + 1
-		-- charBid = charBid +1
-		-- showFadeOutText(goldFrame, "+1")
-		-- PlaySound(125355)
-		-- charGold = tonumber(goldText:GetText())
-		
-		-- Annulation du timer précédent
-		-- if timer then
-			-- timer:Cancel()
-		-- end
-		
-		-- Démarrage d'un nouveau timer
-		-- timer = C_Timer.NewTimer(5, function()
-			-- if piecesMovedToPot > 0 then
-				-- SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
-				-- local channel = IsInRaid() and "RAID" or "PARTY"
-				-- C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
-			-- elseif piecesMovedToPot < 0 then
-				-- SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
-				-- local channel = IsInRaid() and "RAID" or "PARTY"
-				-- C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
-				
-			-- end
-			-- piecesMovedToPot = 0
-		-- end)
-    -- end
--- end)
 
--- decreaseButton:SetScript("OnClick", function()
-    -- local gold = tonumber(goldText:GetText())
-    -- local pot = tonumber(potText:GetText())
-    -- if pot > 0 then
-        -- goldText:SetText(gold + 1)
-        -- potText:SetText(pot - 1)
-		-- globalPot = (pot - 1)
-        -- piecesMovedToPot = piecesMovedToPot - 1
-		-- charBid = charBid -1
-		-- showFadeOutText(goldFrame, "-1")
-		-- PlaySound(125355)
-		-- charGold = tonumber(goldText:GetText())
-		
-		-- Annulation du timer précédent
-		-- if timer then
-			-- timer:Cancel()
-		-- end
-		
-		-- Démarrage d'un nouveau timer
-		-- timer = C_Timer.NewTimer(5, function()
-			-- if piecesMovedToPot > 0 then
-				-- SendChatMessage(L["add "] .. piecesMovedToPot .. L[" coin(s) to the pot"], "EMOTE")
-				-- local channel = IsInRaid() and "RAID" or "PARTY"
-				-- C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. piecesMovedToPot, channel)
-			-- elseif piecesMovedToPot < 0 then
-				-- SendChatMessage(L["remove "] .. math.abs(piecesMovedToPot) .. L[" coin(s) from the pot"], "EMOTE")
-				-- local channel = IsInRaid() and "RAID" or "PARTY"
-				-- C_ChatInfo.SendAddonMessage("PokerDice", "REMOVE " .. math.abs(piecesMovedToPot), channel)
-			-- end
-			-- piecesMovedToPot = 0
-		-- end)
-    -- end
--- end)
 
 ------------------------
 -- BOUTONS OPTIONNELS --
@@ -411,13 +334,61 @@ end)
 
 -- Création du bouton de reset du pot
 local ResetButton = CreateFrame("Button", nil, PlusFrame, "GameMenuButtonTemplate")
-ResetButton:SetPoint("BOTTOM", rollButton, "RIGHT", 100, 0)
+ResetButton:SetPoint("BOTTOM", rollButton, "RIGHT", 100, 10)
 ResetButton:SetSize(125, 25)
 ResetButton:SetText(L["Reset the pot"])
 ResetButton:SetNormalFontObject("GameFontNormalSmall")
 ResetButton:SetHighlightFontObject("GameFontHighlightSmall")
 ResetButton:SetScript("OnClick", function()
     ConfirmResetFrame:Show()
+end)
+
+-- Création de la boîte de dialogue de confirmation de reset de la partie
+local ConfirmResetGameFrame = CreateFrame("Frame", "ConfirmResetGameFrame", PlusFrame, "BasicFrameTemplate")
+ConfirmResetGameFrame:SetSize(600, 100)
+ConfirmResetGameFrame:SetPoint("CENTER", PlusFrame, "CENTER", 150, 150)
+ConfirmResetGameFrame:Hide()
+
+local ConfirmResetGameText = ConfirmResetGameFrame:CreateFontString(nil, "OVERLAY")
+ConfirmResetGameText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+ConfirmResetGameText:SetPoint("CENTER")
+ConfirmResetGameText:SetText(L["Confirm reset the game?"])
+
+local YesResetGameButton = CreateFrame("Button", nil, ConfirmResetGameFrame, "GameMenuButtonTemplate")
+YesResetGameButton:SetPoint("BOTTOMLEFT", ConfirmResetGameFrame, "BOTTOM", 10, 10)
+YesResetGameButton:SetSize(80, 25)
+YesResetGameButton:SetText(L["Yes"])
+YesResetGameButton:SetScript("OnClick", function()
+    potText:SetText(0)
+	local channel = IsInRaid() and "RAID" or "PARTY"
+	C_ChatInfo.SendAddonMessage("PokerDice", "RESETGAME", channel)
+	SendChatMessage(L["has reset the game"], "EMOTE")
+	globalPot = 0
+	charBid = 0
+	isFirstRoll = true
+	isFinished = false
+	rollButton:Disable()
+	rollButton:SetText(L["Bet first!"])
+    ConfirmResetGameFrame:Hide()
+end)
+
+local NoResetGameButton = CreateFrame("Button", nil, ConfirmResetGameFrame, "GameMenuButtonTemplate")
+NoResetGameButton:SetPoint("BOTTOMRIGHT", ConfirmResetGameFrame, "BOTTOM", -10, 10)
+NoResetGameButton:SetSize(80, 25)
+NoResetGameButton:SetText(L["No"])
+NoResetGameButton:SetScript("OnClick", function()
+    ConfirmResetGameFrame:Hide()
+end)
+
+-- Création du bouton de reset de la partie
+local ResetGameButton = CreateFrame("Button", nil, PlusFrame, "GameMenuButtonTemplate")
+ResetGameButton:SetPoint("BOTTOM", rollButton, "RIGHT", 100, -20)
+ResetGameButton:SetSize(125, 25)
+ResetGameButton:SetText(L["Reset the game"])
+ResetGameButton:SetNormalFontObject("GameFontNormalSmall")
+ResetGameButton:SetHighlightFontObject("GameFontHighlightSmall")
+ResetGameButton:SetScript("OnClick", function()
+    ConfirmResetGameFrame:Show()
 end)
 
 -- Création de la boîte de dialogue de confirmation de gage
@@ -442,7 +413,6 @@ YesPenaltyButton:SetScript("OnClick", function()
 	charPenalty = charPenalty +1
 	goldText:SetText(gold + 2)
 	charGold = charGold + 2
-	showFadeOutText(goldFrame, "+2")
 	PlaySound(125355)
     ConfirmPenaltyFrame:Hide()
 end)
@@ -457,7 +427,7 @@ end)
 
 -- Création du bouton de prise de gage
 local PenaltyButton = CreateFrame("Button", nil, PlusFrame, "GameMenuButtonTemplate")
-PenaltyButton:SetPoint("BOTTOM", rollButton, "RIGHT", 300, 0)
+PenaltyButton:SetPoint("BOTTOM", rollButton, "RIGHT", 300, 10)
 PenaltyButton:SetSize(210, 25)
 PenaltyButton:SetText(L["Take a penalty, gain two coins"])
 PenaltyButton:SetNormalFontObject("GameFontNormalSmall")
@@ -474,7 +444,7 @@ local players = {}
 -- Création de la table d'affichage
 local displayTable = PlusFrame:CreateFontString(nil, "OVERLAY")
 displayTable:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-displayTable:SetPoint("TOP", PlusText, "BOTTOM", 0, -10)
+displayTable:SetPoint("TOP", PlusText, "BOTTOM", -20, -10)
 displayTable:SetJustifyH("LEFT")
 displayTable:SetJustifyV("TOP")
 displayTable:SetText(L["Need to be in party"])
@@ -483,7 +453,7 @@ displayTable:SetText(L["Need to be in party"])
 local function updateDisplayTable()
     local displayText = ""
     for name, player in pairs(players) do
-        displayText = displayText .. "|cFF52BE80" .. name .. "|r : " .. player.tableGold .. L["coins"] .. ", " .. player.tableBid .. L["bid"] .. ", " .. player.tablePenalty .. L["penalty"] .. "\n"
+        displayText = displayText .. "|cFF52BE80" .. name .. "|r : " .. player.tableGold .. L["coin(s)"] .. ", " .. player.tableBid .. L["bid"] .. ", " .. player.tablePenalty .. L["penalty"] .. "\n"
     end
     displayTable:SetText(displayText)
 end
@@ -594,7 +564,21 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
 			isFirstRoll = true
 			isFinished = false
 			rollButton:Disable() -- Réactive le bouton
-			rollButton:SetText(L["Bid first!"])
+			rollButton:SetText(L["Bet first!"])
+			bidButton:Enable()
+			PlaySound(125355)
+			TakeThePotButton:Disable()
+		elseif action == "RESETGAME" then
+			potText:SetText(0)
+			goldText:SetText(6)
+			globalPot = 0
+			charBid = 0
+			charGold = 6
+			charPenalty = 0
+			isFirstRoll = true
+			isFinished = false
+			rollButton:Disable()
+			rollButton:SetText(L["Bet first!"])
 			bidButton:Enable()
 			PlaySound(125355)
 			TakeThePotButton:Disable()

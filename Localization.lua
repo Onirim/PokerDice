@@ -7,7 +7,8 @@ local L = core.Locales
 L["frFR"] = {
 		["PokerDice is loaded"] = " |cFF808080est chargé. Pour jouer, assurez-vous d'être en groupe ou en raid avec les autres joueurs et tapez la commande /poker",
         ["Roll the dice"] = "Lancer les dés",
-		["Bid first!"] = "Misez d'abord !",
+		["Bet first!"] = "Misez d'abord !",
+		["Bet"] = "Miser",
 		["Reroll the dice"] = "Relancer ces dés",
 		["Selection"] = "Selectionner",
 		["Finished"] = "Terminé",
@@ -21,9 +22,13 @@ L["frFR"] = {
 		[" coin(s) to the pot"] = " pièce(s) au pot",
 		[" coin(s) from the pot"] = " pièce(s) du pot",
 		["Reset the pot"] = "Réinitialiser le pot",
+		["has reset the game"] = "a réinitialisée la partie",
 		["Confirm reset the pot?"] = [[Souhaitez-vous vraiment réinitialiser le pot ?
 Il sera remis à zéro pour tous les joueurs du groupe !]],
+		["Confirm reset the game?"] = [[Souhaitez-vous vraiment réinitialiser la partie ?
+Le pot, les pièces et les mises seront réinitialisés pour tous les joueurs du groupe !]],
 		["has reset the pot to zero"] = "a réinitialisé le pot à zéro",
+		["Reset the game"] = "Réinitialiser la partie",
 		["Take a penalty, gain two coins"] = "Prenez un gage, gagnez deux pièces",
 		["Do you really want a penalty for two coins?"] = [[Voulez-vous vraiment prendre un gage pour gagner deux 
 pièces ? Assurez-vous que votre gage convienne aux
@@ -68,7 +73,8 @@ comporte les dés les plus hauts est déclarée gagnante !]]
 L["enUS"] = {
 		["PokerDice is loaded"] = " |cFF808080is loaded. For playing, you need to be in the same party or raid as the other players, and type /poker for opening the interface.",
         ["Roll the dice"] = "Roll the dice",
-		["Bid first!"] = "Bid first!",
+		["Bet first!"] = "Bet first!",
+		["Bet"] = "Bet",
 		["Reroll the dice"] = "Reroll the dice",
 		["Selection"] = "Select dice",
 		["Finished"] = "Finished",
@@ -84,7 +90,11 @@ L["enUS"] = {
 		["Reset the pot"] = "Reset the pot",
 		["Confirm reset the pot?"] = [[Do you really want to reset the pot?
 The pot will be reset to zero for all players in the group!]],
+		["Confirm reset the game?"] = [[Do you really want to reset the entire game?
+The pot, coins and bids will be reset for all players in the group!]],
 		["has reset the pot to zero"] = "has reset the pot to zero",
+		["Reset the game"] = "Reset the game",
+		["has reset the game"] = "has reset the game",
 		["Take a penalty, gain two coins"] = "Take a penalty, gain two coins",
 		["Do you really want a penalty for two coins?"] = [[Do you really want to take a penalty and gain two 
 coins? Be sure your penalty is accepted by the
@@ -102,6 +112,7 @@ other players!]],
 Have you win the round?]],
 		["Need to be in party"] = "|cFFFC3232You need to be in party for playing PokerDice!",
 		["RuleTextLib"] = [[
+
 
 
 
