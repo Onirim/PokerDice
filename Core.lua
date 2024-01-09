@@ -467,8 +467,15 @@ end
 
 -- Fonction pour envoyer les informations
 local playerName = UnitName("player") -- Obtient le nom du joueur
+
 local function sendInfo()
-    C_ChatInfo.SendAddonMessage("PokerDice", "SYNC " .. playerName .. " " .. charGold .. " " .. charBid .. " " .. charPenalty, channel)
+	local status, result = pcall(function() return
+		AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName() end)
+		if status then
+			playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
+		end
+    C_ChatInfo.SendAddonMessage("PokerDice", "SYNC|" .. playerName .. "|" .. charGold .. "|" .. charBid .. "|" .. charPenalty, channel)
+
 end
 
 -- Création du ticker
@@ -549,8 +556,8 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
         -- Ignore les messages envoyés par le joueur lui-même
         local playerName = UnitName("player") -- Obtient le nom du joueur
         local senderName = strsplit("-", sender) -- Sépare le nom de l'expéditeur du nom du royaume
-		local action, amount = strsplit(" ", message)
-		local sync, name, gold, bid, penalty = strsplit(" ", message)
+		local action, amount = strsplit("|", message)
+		local sync, name, gold, bid, penalty = strsplit("|", message)
         if action == "ADD" and senderName ~= playerName then
             local pot = tonumber(potText:GetText())
             potText:SetText(pot + tonumber(amount))
