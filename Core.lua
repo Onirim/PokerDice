@@ -238,7 +238,8 @@ bidButton:SetScript("OnClick", function()
 	charGold = tonumber(goldText:GetText())
 	SendChatMessage(L["add a coin to the pot"], "EMOTE")
 	local channel = IsInRaid() and "RAID" or "PARTY"
-	C_ChatInfo.SendAddonMessage("PokerDice", "ADD " .. 1, channel)
+    --print("PokerDice", "ADD|" .. 1, channel)
+    C_ChatInfo.SendAddonMessage("PokerDice", "ADD|" .. 1, channel)
 	if isFirstRoll == true then
 		rollButton:Enable()
 		rollButton:SetText(L["Roll the dice"])
