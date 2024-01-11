@@ -229,24 +229,26 @@ bidButton:SetHighlightFontObject("GameFontHighlight")
 bidButton:SetScript("OnClick", function()
     local gold = tonumber(goldText:GetText())
     local pot = tonumber(potText:GetText())
-    goldText:SetText(gold - 1)
-    potText:SetText(pot + 1)
-	charBid = charBid + 1
-	globalPot = (pot + 1)
-	showFadeOutText(goldFrame, "+1")
-	PlaySound(125355)
-	charGold = tonumber(goldText:GetText())
-	SendChatMessage(L["add a coin to the pot"], "EMOTE")
-	local channel = IsInRaid() and "RAID" or "PARTY"
-    --print("PokerDice", "ADD|" .. 1, channel)
-    C_ChatInfo.SendAddonMessage("PokerDice", "ADD|" .. 1, channel)
-	if isFirstRoll == true then
-		rollButton:Enable()
-		rollButton:SetText(L["Roll the dice"])
-	else 
-		rollButton:SetText(L["Selection"])
-	end
-	bidButton:Disable()
+    if gold > 0 then
+        goldText:SetText(gold - 1)
+        potText:SetText(pot + 1)
+        charBid = charBid + 1
+        globalPot = (pot + 1)
+        showFadeOutText(goldFrame, "+1")
+        PlaySound(125355)
+        charGold = tonumber(goldText:GetText())
+        SendChatMessage(L["add a coin to the pot"], "EMOTE")
+        local channel = IsInRaid() and "RAID" or "PARTY"
+        --print("PokerDice", "ADD|" .. 1, channel)
+        C_ChatInfo.SendAddonMessage("PokerDice", "ADD|" .. 1, channel)
+        if isFirstRoll == true then
+            rollButton:Enable()
+            rollButton:SetText(L["Roll the dice"])
+        else 
+            rollButton:SetText(L["Selection"])
+        end
+        bidButton:Disable()
+    end
 end)
 
 -- Création de la boîte de dialogue de confirmation de récupération du pot
