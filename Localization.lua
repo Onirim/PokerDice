@@ -22,12 +22,12 @@ L["frFR"] = {
 		[" coin(s) to the pot"] = " pièce(s) au pot",
 		[" coin(s) from the pot"] = " pièce(s) du pot",
 		["Reset the pot"] = "Réinitialiser le pot",
-		["has reset the game"] = "a réinitialisée la partie",
+		["has reset the game"] = " a réinitialisée la partie",
 		["Confirm reset the pot?"] = [[Souhaitez-vous vraiment réinitialiser le pot ?
 Il sera remis à zéro pour tous les joueurs du groupe !]],
 		["Confirm reset the game?"] = [[Souhaitez-vous vraiment réinitialiser la partie ?
 Le pot, les pièces et les mises seront réinitialisés pour tous les joueurs du groupe !]],
-		["has reset the pot to zero"] = "a réinitialisé le pot à zéro",
+		["has reset the pot to zero"] = " a réinitialisé le pot à zéro",
 		["Reset the game"] = "Réinitialiser la partie",
 		["Take a penalty, gain two coins"] = "Prenez un gage, gagnez deux pièces",
 		["Do you really want a penalty for two coins?"] = [[Voulez-vous vraiment prendre un gage pour gagner deux 
@@ -92,9 +92,9 @@ L["enUS"] = {
 The pot will be reset to zero for all players in the group!]],
 		["Confirm reset the game?"] = [[Do you really want to reset the entire game?
 The pot, coins and bids will be reset for all players in the group!]],
-		["has reset the pot to zero"] = "has reset the pot to zero",
+		["has reset the pot to zero"] = " has reset the pot to zero",
 		["Reset the game"] = "Reset the game",
-		["has reset the game"] = "has reset the game",
+		["has reset the game"] = " has reset the game",
 		["Take a penalty, gain two coins"] = "Take a penalty, gain two coins",
 		["Do you really want a penalty for two coins?"] = [[Do you really want to take a penalty and gain two 
 coins? Be sure your penalty is accepted by the

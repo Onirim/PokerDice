@@ -116,9 +116,13 @@ end
 --------------------
 
 -- Création de la fenêtre des règles et des Plus
-local PlusFrame = CreateFrame("Frame", "PlusFrame", PokerdiceFrame, "BasicFrameTemplate")
+local PlusFrame = CreateFrame("Frame", "PlusFrame", PokerdiceFrame, "ButtonFrameTemplate")
+ButtonFrameTemplate_HideButtonBar(PlusFrame)
+ButtonFrameTemplate_HidePortrait(PlusFrame)
+PlusFrame.Inset:Hide() 
+PlusFrame:SetFrameStrata("BACKGROUND")
 PlusFrame:SetSize(400, 470) 
-PlusFrame:SetPoint("LEFT", PokerdiceFrame, "RIGHT") 
+PlusFrame:SetPoint("LEFT", PokerdiceFrame, "RIGHT", 0, 0) 
 PlusFrame:Hide()
 
 PlusFrame:EnableMouse(true)
@@ -129,7 +133,7 @@ PlusFrame:SetScript("OnDragStop", function() PokerdiceFrame:StopMovingOrSizing()
 
 local PlusText = PlusFrame:CreateFontString(nil, "OVERLAY")
 PlusText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-PlusText:SetPoint("LEFT", PlusFrame, "LEFT", 5, 120)
+PlusText:SetPoint("LEFT", PlusFrame, "LEFT", 15, 120)
 PlusText:SetJustifyH("LEFT")
 PlusText:SetJustifyV("TOP")
 local rulesText = L["RuleTextLib"]
@@ -238,9 +242,11 @@ bidButton:SetScript("OnClick", function()
         PlaySound(125355)
         charGold = tonumber(goldText:GetText())
         SendChatMessage(L["add a coin to the pot"], "EMOTE")
-        local channel = IsInRaid() and "RAID" or "PARTY"
-        --print("PokerDice", "ADD|" .. 1, channel)
-        C_ChatInfo.SendAddonMessage("PokerDice", "ADD|" .. 1, channel)
+        if IsInRaid() then
+            local channel = "RAID"
+        end
+        --print("PokerDice", "ADD@" .. 1, channel)
+        C_ChatInfo.SendAddonMessage("PokerDice", "ADD@" .. 1, channel)
         if isFirstRoll == true then
             rollButton:Enable()
             rollButton:SetText(L["Roll the dice"])
@@ -269,8 +275,10 @@ YesTakeThePotButton:SetSize(80, 25)
 YesTakeThePotButton:SetText(L["Yes"])
 YesTakeThePotButton:SetScript("OnClick", function()
     potText:SetText(0)
-	local channel = IsInRaid() and "RAID" or "PARTY"
-	C_ChatInfo.SendAddonMessage("PokerDice", "RESETPOT", channel)
+	if IsInRaid() then
+        local channel = "RAID"
+    end
+	C_ChatInfo.SendAddonMessage("PokerDice", "TAKETHEPOT", channel)
 	SendChatMessage(L["has taken the pot!"] .. globalPot .. L["coins"] .. "!", "EMOTE")
 	charGold = charGold + globalPot
 	goldText:SetText(charGold)
@@ -299,7 +307,11 @@ end)
 ------------------------
 
 -- Création de la boîte de dialogue de confirmation de reset du pot
-local ConfirmResetFrame = CreateFrame("Frame", "ConfirmResetFrame", PlusFrame, "BasicFrameTemplate")
+local ConfirmResetFrame = CreateFrame("Frame", "ConfirmResetFrame", PlusFrame, "ButtonFrameTemplate")
+ButtonFrameTemplate_HideButtonBar(ConfirmResetFrame)
+ButtonFrameTemplate_HidePortrait(ConfirmResetFrame)
+ConfirmResetFrame.Inset:Hide() 
+ConfirmResetFrame:SetFrameStrata("LOW")
 ConfirmResetFrame:SetSize(400, 100)
 ConfirmResetFrame:SetPoint("CENTER", PlusFrame, "CENTER", 100, 10)
 ConfirmResetFrame:Hide()
@@ -315,9 +327,17 @@ YesResetButton:SetSize(80, 25)
 YesResetButton:SetText(L["Yes"])
 YesResetButton:SetScript("OnClick", function()
     potText:SetText(0)
-	local channel = IsInRaid() and "RAID" or "PARTY"
-	C_ChatInfo.SendAddonMessage("PokerDice", "RESETPOT", channel)
-	SendChatMessage(L["has reset the pot to zero"], "EMOTE")
+	if IsInRaid() then
+        local channel = "RAID"
+    end
+    local playerName = UnitName("player")
+    local status, result = pcall(function() return
+		AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName() end)
+		if status then
+			playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
+		end
+	C_ChatInfo.SendAddonMessage("PokerDice", "RESETPOT@" .. playerName , channel)
+	--SendChatMessage(L["has reset the pot to zero"], "EMOTE")
 	globalPot = 0
 	charBid = 0
 	isFirstRoll = true
@@ -347,9 +367,13 @@ ResetButton:SetScript("OnClick", function()
 end)
 
 -- Création de la boîte de dialogue de confirmation de reset de la partie
-local ConfirmResetGameFrame = CreateFrame("Frame", "ConfirmResetGameFrame", PlusFrame, "BasicFrameTemplate")
+local ConfirmResetGameFrame = CreateFrame("Frame", "ConfirmResetGameFrame", PlusFrame, "ButtonFrameTemplate")
+ButtonFrameTemplate_HideButtonBar(ConfirmResetGameFrame)
+ButtonFrameTemplate_HidePortrait(ConfirmResetGameFrame)
+ConfirmResetGameFrame.Inset:Hide() 
+ConfirmResetGameFrame:SetFrameStrata("LOW")
 ConfirmResetGameFrame:SetSize(600, 100)
-ConfirmResetGameFrame:SetPoint("CENTER", PlusFrame, "CENTER", 150, 150)
+ConfirmResetGameFrame:SetPoint("CENTER", PlusFrame, "CENTER", 150, 120)
 ConfirmResetGameFrame:Hide()
 
 local ConfirmResetGameText = ConfirmResetGameFrame:CreateFontString(nil, "OVERLAY")
@@ -363,9 +387,17 @@ YesResetGameButton:SetSize(80, 25)
 YesResetGameButton:SetText(L["Yes"])
 YesResetGameButton:SetScript("OnClick", function()
     potText:SetText(0)
-	local channel = IsInRaid() and "RAID" or "PARTY"
-	C_ChatInfo.SendAddonMessage("PokerDice", "RESETGAME", channel)
-	SendChatMessage(L["has reset the game"], "EMOTE")
+	if IsInRaid() then
+        local channel = "RAID"
+    end
+    local playerName = UnitName("player")
+    local status, result = pcall(function() return
+		AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName() end)
+		if status then
+			local playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
+		end
+	C_ChatInfo.SendAddonMessage("PokerDice", "RESETGAME@" .. playerName, channel)
+	--SendChatMessage(L["has reset the game"], "EMOTE")
 	globalPot = 0
 	charBid = 0
 	isFirstRoll = true
@@ -396,7 +428,11 @@ end)
 
 -- Création de la boîte de dialogue de confirmation de gage
 
-local ConfirmPenaltyFrame = CreateFrame("Frame", "ConfirmPenaltyFrame", PlusFrame, "BasicFrameTemplate")
+local ConfirmPenaltyFrame = CreateFrame("Frame", "ConfirmPenaltyFrame", PlusFrame, "ButtonFrameTemplate")
+ButtonFrameTemplate_HideButtonBar(ConfirmPenaltyFrame)
+ButtonFrameTemplate_HidePortrait(ConfirmPenaltyFrame)
+ConfirmPenaltyFrame.Inset:Hide() 
+ConfirmPenaltyFrame:SetFrameStrata("LOW")
 ConfirmPenaltyFrame:SetSize(400, 120)
 ConfirmPenaltyFrame:SetPoint("CENTER", PlusFrame, "CENTER", 100, -110)
 ConfirmPenaltyFrame:Hide()
@@ -477,7 +513,7 @@ local function sendInfo()
 		if status then
 			playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
 		end
-    C_ChatInfo.SendAddonMessage("PokerDice", "SYNC|" .. playerName .. "|" .. charGold .. "|" .. charBid .. "|" .. charPenalty, channel)
+    C_ChatInfo.SendAddonMessage("PokerDice", "SYNC@" .. playerName .. "@" .. charGold .. "@" .. charBid .. "@" .. charPenalty, channel)
 
 end
 
@@ -559,14 +595,27 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
         -- Ignore les messages envoyés par le joueur lui-même
         local playerName = UnitName("player") -- Obtient le nom du joueur
         local senderName = strsplit("-", sender) -- Sépare le nom de l'expéditeur du nom du royaume
-		local action, amount = strsplit("|", message)
-		local sync, name, gold, bid, penalty = strsplit("|", message)
+		local action, amount = strsplit("@", message)
+		local sync, name, gold, bid, penalty = strsplit("@", message)
+        local reset, resetName = strsplit("@", message)
         if action == "ADD" and senderName ~= playerName then
             local pot = tonumber(potText:GetText())
             potText:SetText(pot + tonumber(amount))
 			showFadeOutText(goldFrame, "+" .. amount)
 			PlaySound(125355)
 			globalPot = (pot + tonumber(amount))
+        elseif action == "TAKETHEPOT" then
+            potText:SetText(0)
+			globalPot = 0
+			charBid = 0
+			isFirstRoll = true
+			isFinished = false
+			rollButton:Disable() -- Réactive le bouton
+			rollButton:SetText(L["Bet first!"])
+			bidButton:Enable()
+            bidButton:SetText(L["Bet"])
+			PlaySound(125355)
+			TakeThePotButton:Disable()
 		elseif action == "RESETPOT" then
 			potText:SetText(0)
 			globalPot = 0
@@ -575,9 +624,11 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
 			isFinished = false
 			rollButton:Disable() -- Réactive le bouton
 			rollButton:SetText(L["Bet first!"])
+            bidButton:SetText(L["Bet"])
 			bidButton:Enable()
 			PlaySound(125355)
 			TakeThePotButton:Disable()
+            print("|cffffff00" .. resetName .. L["has reset the pot to zero"])
 		elseif action == "RESETGAME" then
 			potText:SetText(0)
 			goldText:SetText(6)
@@ -589,9 +640,11 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
 			isFinished = false
 			rollButton:Disable()
 			rollButton:SetText(L["Bet first!"])
+            bidButton:SetText(L["Bet"])
 			bidButton:Enable()
 			PlaySound(125355)
 			TakeThePotButton:Disable()
+            print("|cffffff00" .. resetName .. L["has reset the game"])
         elseif sync == "SYNC" then
             onSyncMessage(name, tonumber(gold), tonumber(bid), tonumber(penalty))
         end

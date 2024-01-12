@@ -1,4 +1,4 @@
-This is a dice poker game for two or more players who works when the players are in the same party or raid group.
+This is a dice poker game for two or more players who works when the players are in the same party or raid.
 The objective is to achieve the best combination in two dice rolls. The first player is the one who won the previous round. A normal game is played with six pieces per player.
 
 - Everyone starts by betting one coin.
