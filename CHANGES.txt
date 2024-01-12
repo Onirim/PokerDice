@@ -1,3 +1,4 @@
 - Update the right panel to the new UI
 - Communication works now correctly in raid
 - The OOC messages are now sent in a system message, not in an emote
+- Adding a minimap icon!

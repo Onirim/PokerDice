@@ -1,7 +1,8 @@
 ## Interface: 100200
-## Version: 2.2.3
+## Version: 2.2.4
 ## Title: Poker Dice
 ## Notes: Do you like to play poker with dice?
+## SavedVariables: PokerDiceDb
 ## Author: Onirim
 
 Localization.lua

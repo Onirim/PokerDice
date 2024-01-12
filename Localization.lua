@@ -5,8 +5,9 @@ local L = core.Locales
 
 
 L["frFR"] = {
-		["PokerDice is loaded"] = " |cFF808080est chargé. Pour jouer, assurez-vous d'être en groupe ou en raid avec les autres joueurs et tapez la commande /poker",
-        ["Roll the dice"] = "Lancer les dés",
+		["PokerDice is loaded"] = " |cFF808080est chargé. Pour jouer, assurez-vous d'être en groupe ou en raid avec les autres joueurs et tapez la commande /poker ou utiliser le bouton de la minimap.",
+        ["Open/Close minimap button"] = "|cFF7cfc00Clic-gauche|r |cFFFFFFFF: Ouvrir/Fermer PokerDice|r",
+		["Roll the dice"] = "Lancer les dés",
 		["Bet first!"] = "Misez d'abord !",
 		["Bet"] = "Miser",
 		["Reroll the dice"] = "Relancer ces dés",
@@ -71,8 +72,9 @@ comporte les dés les plus hauts est déclarée gagnante !]]
     }
 	
 L["enUS"] = {
-		["PokerDice is loaded"] = " |cFF808080is loaded. For playing, you need to be in the same party or raid as the other players, and type /poker for opening the interface.",
-        ["Roll the dice"] = "Roll the dice",
+		["PokerDice is loaded"] = " |cFF808080is loaded. For playing, you need to be in the same party or raid as the other players, and type /poker or use the minimap button for opening the interface.",
+        ["Open/Close minimap button"] = "|cFF7cfc00Left-click|r |cFFFFFFFF: Open/Close PokerDice|r",
+		["Roll the dice"] = "Roll the dice",
 		["Bet first!"] = "Bet first!",
 		["Bet"] = "Bet",
 		["Reroll the dice"] = "Reroll the dice",

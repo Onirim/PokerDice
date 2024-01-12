@@ -2,7 +2,48 @@
 local _, core = ...
 local L = core.Locales[GetLocale()] or core.Locales["enUS"]
 local version = GetAddOnMetadata("PokerDice", "Version")
---L = core.Locales["enUS"] -- pour test uniquement, doit être commenté sinon
+
+
+-- Création du bouton de minimap
+local icon = LibStub("LibDBIcon-1.0")
+local f = CreateFrame("Frame")
+f:RegisterEvent("VARIABLES_LOADED")
+f:SetScript("OnEvent", function(self, event)
+    if type(PokerDiceDb) ~= "table" then
+        PokerDiceDb = {}
+    end
+    if type(PokerDiceDb.minimapIcon) ~= "table" then
+        PokerDiceDb.minimapIcon = {}
+    end
+    CreateMinimapButton(PokerDiceDb.minimapIcon)
+end)
+
+function CreateMinimapButton()
+    local ldb = LibStub("LibDataBroker-1.1")
+    local minimapButton = ldb:NewDataObject('PokerDiceMinimapIcon', { --rename this more unique to your addon
+        type = "launcher",
+        icon = 1669494,
+        OnClick = function(_, button)
+            if button == "LeftButton" then
+                if PokerdiceFrame:IsVisible() then
+                PokerdiceFrame:Hide()
+                else
+                PokerdiceFrame:Show()
+                end
+            end
+        end,
+        OnTooltipShow = function(tooltip)
+            if not tooltip or not tooltip.AddLine then return end
+            tooltip:AddLine("PokerDice                                    " .. version)
+            tooltip:AddLine(" ")
+            tooltip:AddLine(L["Open/Close minimap button"])
+        end,
+    })
+    local minimapIcon = LibStub("LibDBIcon-1.0")
+    minimapIcon:Register('PokerDiceMinimapIcon', minimapButton, PokerDiceDb) --last arg is usually a table in your saved variables so it remembers the positon
+end
+
+
 
 -- Enregistrement du préfixe de l'addon
 C_ChatInfo.RegisterAddonMessagePrefix("PokerDice")
