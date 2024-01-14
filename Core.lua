@@ -5,10 +5,10 @@ local version = GetAddOnMetadata("PokerDice", "Version")
 
 
 -- Création du bouton de minimap
-local icon = LibStub("LibDBIcon-1.0")
 local f = CreateFrame("Frame")
 f:RegisterEvent("VARIABLES_LOADED")
 f:SetScript("OnEvent", function(self, event)
+    local icon = LibStub("LibDBIcon-1.0")
     if type(PokerDiceDb) ~= "table" then
         PokerDiceDb = {}
     end
