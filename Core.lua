@@ -299,7 +299,10 @@ bidButton:SetScript("OnClick", function()
 end)
 
 -- Création de la boîte de dialogue de confirmation de récupération du pot
-local ConfirmTakeThePotFrame = CreateFrame("Frame", "ConfirmTakeThePotFrame", potFrame, "BasicFrameTemplate")
+local ConfirmTakeThePotFrame = CreateFrame("Frame", "ConfirmTakeThePotFrame", potFrame, "ButtonFrameTemplate")
+ButtonFrameTemplate_HideButtonBar(ConfirmTakeThePotFrame)
+ButtonFrameTemplate_HidePortrait(ConfirmTakeThePotFrame)
+ConfirmTakeThePotFrame.Inset:Hide() 
 ConfirmTakeThePotFrame:SetSize(400, 100)
 ConfirmTakeThePotFrame:SetPoint("CENTER", potFrame, "CENTER", 300, -10)
 ConfirmTakeThePotFrame:Hide()
@@ -554,7 +557,9 @@ local function sendInfo()
 		if status then
 			playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
 		end
-    C_ChatInfo.SendAddonMessage("PokerDice", "SYNC@" .. playerName .. "@" .. charGold .. "@" .. charBid .. "@" .. charPenalty, channel)
+        if not IsInInstance() then
+            C_ChatInfo.SendAddonMessage("PokerDice", "SYNC@" .. playerName .. "@" .. charGold .. "@" .. charBid .. "@" .. charPenalty, channel)
+        end
 
 end
 
