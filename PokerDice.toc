@@ -1,5 +1,5 @@
-## Interface: 100205
-## Version: 2.2.8
+## Interface: 100206
+## Version: 2.2.9
 ## Title: Poker Dice
 ## Notes: Do you like to play poker with dice?
 ## SavedVariables: PokerDiceDb
