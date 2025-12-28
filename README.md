@@ -14,8 +14,8 @@ List of combinations in order of value:
 - Poker: Five dice of the same value
 - 4-of-a-Kind: Four dice of the same value
 - Full House: A three-of-a-kind + a pair
-- Great Straight: Dice sequence ranging from 2 to 6
-- Small Straight: Dice sequence ranging from 1 to 5
+- Great Straight: Dice sequence of 5 dices
+- Small Straight: Dice sequence of 4 dices
 - 3-of-a-Kind: Three dice of the same value
 - Double Pair: Two pairs
 - Pair: Two dice of the same value
