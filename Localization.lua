@@ -61,8 +61,8 @@ Liste des combinaisons par ordre de valeur :
 - |cFFdaa520Poker|r : Cinq dés de même valeur
 - |cFFdaa520Carré|r : Quatre dés de même valeur
 - |cFFdaa520Full|r : Un brelan + une paire
-- |cFFdaa520Grande suite|r : Suite de dés allant de 2 à 6
-- |cFFdaa520Petite suite|r : Suite de dés allant de 1 à 5
+- |cFFdaa520Grande suite|r : Suite de 5 dés
+- |cFFdaa520Petite suite|r : Suite de 4 dés
 - |cFFdaa520Brelan|r : Trois dés de même valeur
 - |cFFdaa520Double paire|r : Deux paires
 - |cFFdaa520Paire|r : Deux dés de même valeur
@@ -128,8 +128,8 @@ List of combinations in order of value:
 - |cFFdaa520Poker|r: Five dice of the same value
 - |cFFdaa5204-of-a-Kind|r: Four dice of the same value
 - |cFFdaa520Full House|r: A three-of-a-kind + a pair
-- |cFFdaa520Great Straight|r: Dice sequence ranging from 2 to 6
-- |cFFdaa520Small Straight|r: Dice sequence ranging from 1 to 5
+- |cFFdaa520Great Straight|r: Dice sequence of 5 dices
+- |cFFdaa520Small Straight|r: Dice sequence of 4 dices
 - |cFFdaa5203-of-a-Kind|r: Three dice of the same value
 - |cFFdaa520Double Pair|r: Two pairs
 - |cFFdaa520Pair|r: Two dice of the same value
@@ -138,3 +138,4 @@ When the combinations are of equal value, the one that
 has the highest dice is declared the winner!]]
     }
     -- Ajoutez d'autres langues ici...
+
