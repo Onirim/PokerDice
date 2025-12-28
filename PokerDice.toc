@@ -1,5 +1,5 @@
-## Interface: 110002
-## Version: 2.3.1
+## Interface: 110207
+## Version: 2.3.2
 ## Title: Poker Dice
 ## Notes: Do you like to play poker with dice?
 ## SavedVariables: PokerDiceDb
@@ -7,3 +7,4 @@
 
 Localization.lua
 Core.lua
+
