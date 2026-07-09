@@ -18,7 +18,27 @@ L["frFR"] = {
 		["Rerolls the dice and get "] = "relance les dés et obtient ",
 		["add "] = "ajoute ",
 		["remove "] = "retire ",
-		["Raise"] = "Enchérir ",
+		["Follow"] = "Suivre",
+		["Fold"] = "Se coucher",
+		["Keep all"] = "Garder tout",
+		["StatusInRound"] = "En jeu",
+		["StatusFollowed"] = "A suivi",
+		["StatusFolded"] = "Couché",
+		["StatusReady"] = "Prêt",
+		["WaitingFor"] = "En attente de : ",
+		["StatusDecision2"] = "Suivez ou couchez-vous",
+		["StatusRoll2"] = "Sélectionnez vos dés à relancer, ou gardez tout",
+		["wins the round with"] = " remporte la manche avec ",
+		["Everyone folded, pot carries over"] = "Tout le monde s'est couché, le pot est conservé pour la manche suivante.",
+		["HandFiveKind"] = "Poker",
+		["HandFourKind"] = "Carré",
+		["HandFullHouse"] = "Full House",
+		["HandLargeStraight"] = "Grande suite",
+		["HandSmallStraight"] = "Petite suite",
+		["HandThreeKind"] = "Brelan",
+		["HandTwoPair"] = "Double paire",
+		["HandPair"] = "Paire",
+		["HandHighCard"] = "Rien",
 		["add a coin to the pot"] = "ajoute une pièce au pot",
 		[" coin(s) to the pot"] = " pièce(s) au pot",
 		[" coin(s) from the pot"] = " pièce(s) du pot",
@@ -37,14 +57,9 @@ autres joueurs !]],
 		["has accepted a penalty for gaining two coins"] = "a accepté un gage pour gagner deux pièces",
 		["Yes"] = "Oui",
 		["No"] = "Non",
-		["coins"] = " pièces ",
 		["coin(s)"] = " pièce(s) ",
 		["penalty"] = " gage(s)",
-		["take the pot"] = "Gagner le pot",
-		["has taken the pot!"] = "a gagné le pot et récupère ",
 		["bid"] = " pièce(s) misées",
-		["Confirm take the pot?"] = [[Vous êtes sur le point de prendre le contenu du pot !
-Avez-vous gagné la manche ?]],
 		["Need to be in party"] = " |cFFFC3232Vous devez être en groupe pour jouer à PokerDice !",
 		["RuleTextLib"] = [[
 
@@ -55,6 +70,17 @@ Bienvenue sur PokerDice !
 
 Cet add-on nécessite que les joueurs soient en groupe pour
 fonctionner correctement.
+
+Déroulé d'une manche :
+- Misez pour rejoindre la manche, puis lancez vos 5 dés.
+- Suivez (nouvelle mise) pour continuer, ou couchez-vous
+  pour abandonner (votre mise reste dans le pot).
+- Relancez les dés de votre choix, ou gardez-les tous :
+  dans les deux cas cela valide votre tirage final.
+- Les tirages restent cachés tant que tous les joueurs
+  encore en lice n'ont pas validé. Le résultat est alors
+  révélé pour tout le monde en même temps et le pot est
+  attribué automatiquement au vainqueur.
 
 Liste des combinaisons par ordre de valeur :
 
@@ -68,7 +94,13 @@ Liste des combinaisons par ordre de valeur :
 - |cFFdaa520Paire|r : Deux dés de même valeur
 
 Quand les combinaisons sont de valeur identique, celle qui
-comporte les dés les plus hauts est déclarée gagnante !]]
+comporte les dés les plus hauts est déclarée gagnante !
+En cas d'égalité parfaite, le pot est partagé également
+entre les gagnants.
+
+Si tous les joueurs se couchent après le premier lancer,
+personne ne gagne : le pot est conservé pour la manche
+suivante.]]
     }
 	
 L["enUS"] = {
@@ -83,7 +115,27 @@ L["enUS"] = {
         ["Plus"] = "Plus >>",
 		["Rolls the dice and get "] = "rolls the dice and get ",
 		["Rerolls the dice and get "] = "rerolls the dice and get ",
-		["Raise"] = "Raise",
+		["Follow"] = "Follow",
+		["Fold"] = "Fold",
+		["Keep all"] = "Keep all",
+		["StatusInRound"] = "In round",
+		["StatusFollowed"] = "Followed",
+		["StatusFolded"] = "Folded",
+		["StatusReady"] = "Ready",
+		["WaitingFor"] = "Waiting for: ",
+		["StatusDecision2"] = "Follow or fold",
+		["StatusRoll2"] = "Select dice to reroll, or keep all",
+		["wins the round with"] = " wins the round with ",
+		["Everyone folded, pot carries over"] = "Everyone folded, the pot carries over to the next round.",
+		["HandFiveKind"] = "Poker",
+		["HandFourKind"] = "4-of-a-Kind",
+		["HandFullHouse"] = "Full House",
+		["HandLargeStraight"] = "Great Straight",
+		["HandSmallStraight"] = "Small Straight",
+		["HandThreeKind"] = "3-of-a-Kind",
+		["HandTwoPair"] = "Double Pair",
+		["HandPair"] = "Pair",
+		["HandHighCard"] = "Nothing",
 		["add "] = "add ",
 		["add a coin to the pot"] = "add a coin to the pot",
 		["remove "] = "remove ",
@@ -104,14 +156,9 @@ other players!]],
 		["has accepted a penalty for gaining two coins"] = "has accepted a penalty for gaining two coins",
 		["Yes"] = "Yes",
 		["No"] = "No",
-		["coins"] = " coins ",
 		["coin(s)"] = " coin(s) ",
 		["penalty"] = " penalty",
-		["take the pot"] = "Take the pot",
-		["has taken the pot!"] = "has taken the pot and gains ",
 		["bid"] = " coin(s) bet",
-		["Confirm take the pot?"] = [[You are about to take the pot and gain all the coins!
-Have you win the round?]],
 		["Need to be in party"] = "|cFFFC3232You need to be in party for playing PokerDice!",
 		["RuleTextLib"] = [[
 
@@ -122,6 +169,17 @@ Welcome to PokerDice!
 
 This add-on need the players to join the same party
 or raid to work properly.
+
+Round flow:
+- Bet to join the round, then roll your 5 dice.
+- Follow (bet again) to continue, or fold to drop out
+  (your bet stays in the pot).
+- Reroll the dice you want, or keep them all: either
+  way, this locks in your final roll.
+- Rolls stay hidden until every player still in the
+  round has locked in. Results are then revealed for
+  everyone at the same time and the pot is awarded to
+  the winner automatically.
 
 List of combinations in order of value:
 
@@ -134,8 +192,13 @@ List of combinations in order of value:
 - |cFFdaa520Double Pair|r: Two pairs
 - |cFFdaa520Pair|r: Two dice of the same value
 
-When the combinations are of equal value, the one that 
-has the highest dice is declared the winner!]]
+When the combinations are of equal value, the one that
+has the highest dice is declared the winner!
+In case of a perfect tie, the pot is split evenly
+between the winners.
+
+If every player folds after the first roll, no one
+wins: the pot carries over to the next round.]]
     }
     -- Ajoutez d'autres langues ici...
 
