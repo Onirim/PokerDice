@@ -283,9 +283,7 @@ bidButton:SetScript("OnClick", function()
         PlaySound(125355)
         charGold = tonumber(goldText:GetText())
         SendChatMessage(L["add a coin to the pot"], "EMOTE")
-        if IsInRaid() then
-            local channel = "RAID"
-        end
+        local channel = IsInRaid() and "RAID" or "PARTY"
         --print("PokerDice", "ADD@" .. 1, channel)
         C_ChatInfo.SendAddonMessage("PokerDice", "ADD@" .. 1, channel)
         if isFirstRoll == true then
@@ -319,9 +317,7 @@ YesTakeThePotButton:SetSize(80, 25)
 YesTakeThePotButton:SetText(L["Yes"])
 YesTakeThePotButton:SetScript("OnClick", function()
     potText:SetText(0)
-	if IsInRaid() then
-        local channel = "RAID"
-    end
+	local channel = IsInRaid() and "RAID" or "PARTY"
 	C_ChatInfo.SendAddonMessage("PokerDice", "TAKETHEPOT", channel)
 	SendChatMessage(L["has taken the pot!"] .. globalPot .. L["coins"] .. "!", "EMOTE")
 	charGold = charGold + globalPot
@@ -371,9 +367,7 @@ YesResetButton:SetSize(80, 25)
 YesResetButton:SetText(L["Yes"])
 YesResetButton:SetScript("OnClick", function()
     potText:SetText(0)
-	if IsInRaid() then
-        local channel = "RAID"
-    end
+	local channel = IsInRaid() and "RAID" or "PARTY"
     local playerName = UnitName("player")
     local status, result = pcall(function() return
 		AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName() end)
@@ -431,9 +425,7 @@ YesResetGameButton:SetSize(80, 25)
 YesResetGameButton:SetText(L["Yes"])
 YesResetGameButton:SetScript("OnClick", function()
     potText:SetText(0)
-	if IsInRaid() then
-        local channel = "RAID"
-    end
+	local channel = IsInRaid() and "RAID" or "PARTY"
     local playerName = UnitName("player")
     local status, result = pcall(function() return
 		AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName() end)
@@ -558,6 +550,7 @@ local function sendInfo()
 			playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
 		end
         if not IsInInstance() then
+            local channel = IsInRaid() and "RAID" or "PARTY"
             C_ChatInfo.SendAddonMessage("PokerDice", "SYNC@" .. playerName .. "@" .. charGold .. "@" .. charBid .. "@" .. charPenalty, channel)
         end
 
