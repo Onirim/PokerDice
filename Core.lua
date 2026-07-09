@@ -430,7 +430,7 @@ YesResetGameButton:SetScript("OnClick", function()
     local status, result = pcall(function() return
 		AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName() end)
 		if status then
-			local playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
+			playerName =  AddOn_TotalRP3.Player.GetCurrentUser():GetFirstName()
 		end
 	C_ChatInfo.SendAddonMessage("PokerDice", "RESETGAME@" .. playerName, channel)
 	--SendChatMessage(L["has reset the game"], "EMOTE")
