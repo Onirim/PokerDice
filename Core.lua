@@ -453,6 +453,7 @@ YesPenaltyButton:SetScript("OnClick", function()
     goldText:SetText(state.gold)
     PlaySound(125355)
     ConfirmPenaltyFrame:Hide()
+    refreshUI() -- réactive Miser/Suivre si le joueur était à 0 pièce
 end)
 
 local NoPenaltyButton = CreateFrame("Button", nil, ConfirmPenaltyFrame, "GameMenuButtonTemplate")
@@ -600,7 +601,8 @@ end
 refreshUI = function()
     if state.phase == Phase.ANTE then
         rollButton:Show(); rollButton:Disable(); rollButton:SetText(L["Bet first!"])
-        bidButton:Show(); bidButton:Enable(); bidButton:SetText(L["Bet"])
+        bidButton:Show(); bidButton:SetText(L["Bet"])
+        if state.gold > 0 then bidButton:Enable() else bidButton:Disable() end
         foldButton:Hide()
         lockButton:Hide()
         statusText:SetText("")
@@ -612,7 +614,8 @@ refreshUI = function()
         statusText:SetText("")
     elseif state.phase == Phase.DECISION2 then
         rollButton:Hide()
-        bidButton:Show(); bidButton:Enable(); bidButton:SetText(L["Follow"])
+        bidButton:Show(); bidButton:SetText(L["Follow"])
+        if state.gold > 0 then bidButton:Enable() else bidButton:Disable() end
         foldButton:Show(); foldButton:Enable()
         lockButton:Hide()
         statusText:SetText(L["StatusDecision2"])
