@@ -478,12 +478,45 @@ end)
 -- TABLEAU DES SCORES --
 ------------------------
 
+-- Fenêtre flottante et déplaçable, indépendante de PokerdiceFrame/PlusFrame
+local ScoreboardFrame = CreateFrame("Frame", "PokerDiceScoreboardFrame", UIParent, "ButtonFrameTemplate")
+ButtonFrameTemplate_HideButtonBar(ScoreboardFrame)
+ButtonFrameTemplate_HidePortrait(ScoreboardFrame)
+ScoreboardFrame.Inset:Hide()
+ScoreboardFrame:SetFrameStrata("BACKGROUND")
+ScoreboardFrame:SetSize(400, 300)
+ScoreboardFrame:SetPoint("TOPLEFT", PokerdiceFrame, "TOPRIGHT", 10, 0)
+ScoreboardFrame:SetTitle(L["Scoreboard"])
+ScoreboardFrame:Hide()
+ScoreboardFrame:EnableMouse(true)
+ScoreboardFrame:SetMovable(true)
+ScoreboardFrame:RegisterForDrag("LeftButton")
+ScoreboardFrame:SetScript("OnDragStart", ScoreboardFrame.StartMoving)
+ScoreboardFrame:SetScript("OnDragStop", ScoreboardFrame.StopMovingOrSizing)
+
+-- Bouton pour ouvrir/fermer le tableau des scores, à côté du bouton Plus
+local ScoreButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
+ScoreButton:SetPoint("RIGHT", PlusButton, "LEFT", -6, 0)
+ScoreButton:SetSize(90, 22)
+ScoreButton:SetText(L["Scores"])
+ScoreButton:SetNormalFontObject("GameFontNormalSmall")
+ScoreButton:SetHighlightFontObject("GameFontHighlightSmall")
+ScoreButton:SetScript("OnClick", function()
+    if ScoreboardFrame:IsShown() then
+        ScoreboardFrame:Hide()
+    else
+        ScoreboardFrame:Show()
+    end
+end)
+
 -- Création de la table d'affichage
-displayTable = PlusFrame:CreateFontString(nil, "OVERLAY")
+displayTable = ScoreboardFrame:CreateFontString(nil, "OVERLAY")
 displayTable:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-displayTable:SetPoint("TOP", PlusText, "BOTTOM", -20, -10)
+displayTable:SetPoint("TOPLEFT", ScoreboardFrame, "TOPLEFT", 15, -30)
+displayTable:SetWidth(390)
 displayTable:SetJustifyH("LEFT")
 displayTable:SetJustifyV("TOP")
+displayTable:SetWordWrap(true)
 displayTable:SetText(L["Need to be in party"])
 
 local statusLabels = {
