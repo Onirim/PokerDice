@@ -483,7 +483,8 @@ local ScoreboardFrame = CreateFrame("Frame", "PokerDiceScoreboardFrame", UIParen
 ButtonFrameTemplate_HideButtonBar(ScoreboardFrame)
 ButtonFrameTemplate_HidePortrait(ScoreboardFrame)
 ScoreboardFrame.Inset:Hide()
-ScoreboardFrame:SetFrameStrata("BACKGROUND")
+ScoreboardFrame:SetFrameStrata("HIGH")
+ScoreboardFrame:SetToplevel(true)
 ScoreboardFrame:SetSize(400, 300)
 ScoreboardFrame:SetPoint("TOPLEFT", PokerdiceFrame, "TOPRIGHT", 10, 0)
 ScoreboardFrame:SetTitle(L["Scoreboard"])
@@ -496,7 +497,7 @@ ScoreboardFrame:SetScript("OnDragStop", ScoreboardFrame.StopMovingOrSizing)
 
 -- Bouton pour ouvrir/fermer le tableau des scores, à côté du bouton Plus
 local ScoreButton = CreateFrame("Button", nil, PokerdiceFrame, "GameMenuButtonTemplate")
-ScoreButton:SetPoint("RIGHT", PlusButton, "LEFT", -6, 0)
+ScoreButton:SetPoint("RIGHT", PlusButton, "LEFT", 0, 0)
 ScoreButton:SetSize(90, 22)
 ScoreButton:SetText(L["Scores"])
 ScoreButton:SetNormalFontObject("GameFontNormalSmall")
@@ -506,6 +507,7 @@ ScoreButton:SetScript("OnClick", function()
         ScoreboardFrame:Hide()
     else
         ScoreboardFrame:Show()
+        ScoreboardFrame:Raise()
     end
 end)
 
@@ -548,14 +550,16 @@ end
 -- correspondre exactement aux clés de state.roundPlayers pour que le statut
 -- de manche s'affiche correctement dans le tableau de scores.
 sendInfo = function()
-    if not IsInInstance() then
-        local channel = IsInRaid() and "RAID" or "PARTY"
-        C_ChatInfo.SendAddonMessage("PokerDice", "SYNC@" .. playerName .. "@" .. state.gold .. "@" .. state.bid .. "@" .. state.penalty, channel)
-    end
+    -- SendAddonMessage ne renvoie jamais le message à son propre expéditeur :
+    -- on met donc aussi à jour sa propre ligne directement en local.
+    onSyncMessage(playerName, state.gold, state.bid, state.penalty)
+    local channel = IsInRaid() and "RAID" or "PARTY"
+    C_ChatInfo.SendAddonMessage("PokerDice", "SYNC@" .. playerName .. "@" .. state.gold .. "@" .. state.bid .. "@" .. state.penalty, channel)
 end
 
--- Création du ticker
+-- Création du ticker (+ un premier appel immédiat pour ne pas attendre 4s avant de s'afficher soi-même)
 local ticker = C_Timer.NewTicker(4, sendInfo)
+sendInfo()
 
 ---------------------------
 -- MACHINE A ETATS : UI  --
@@ -711,8 +715,10 @@ end
 onResult = function(winners, amountEach, handKey, remainder)
     if state.resolved then return end
     state.resolved = true
+    local iWon = false
     for _, w in ipairs(winners) do
         if w == playerName then
+            iWon = true
             state.gold = state.gold + amountEach
             goldText:SetText(state.gold)
         end
@@ -720,6 +726,11 @@ onResult = function(winners, amountEach, handKey, remainder)
     state.pot = remainder
     potText:SetText(remainder)
     statusText:SetText(table.concat(winners, ", ") .. L["wins the round with"] .. L[handKey])
+    PlaySound(179341) -- son de pièces, joué par tout le monde quand le pot est distribué
+    if iWon then
+        -- diffusé en emote uniquement par le(s) gagnant(s), pour que tout le groupe le voie dans le chat
+        SendChatMessage(L["wins the round with"] .. L[handKey] .. "!", "EMOTE")
+    end
     state.phase = Phase.RESULTS
     refreshUI()
     C_Timer.After(4, clearRoundState)
