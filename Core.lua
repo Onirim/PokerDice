@@ -39,7 +39,7 @@ local players = {} -- scoreboard persistant (or/mise/gage), peuplé par les mess
 -- Fonctions déclarées ici pour permettre les références croisées avant leur définition
 local refreshUI, clearRoundState, resetRound, lockHand
 local tryResolveShowdown, onResult, onNoWinner, onPeerJoin
-local getMissingPlayers, allActivePlayersLocked
+local getMissingPlayers, allActivePlayersLocked, allEnteredPlayersRolled
 local updateRollButtonForSelection, anySelected, describeDice
 local updateDisplayTable, onSyncMessage, showFadeOutText, sendInfo
 
@@ -282,6 +282,8 @@ bidButton:SetHighlightFontObject("GameFontHighlight")
 bidButton:SetScript("OnClick", function()
     if state.gold <= 0 then return end
     if state.phase ~= Phase.ANTE and state.phase ~= Phase.DECISION2 then return end
+    -- On ne peut suivre que lorsque tous les joueurs entrés dans la manche ont lancé leurs dés
+    if state.phase == Phase.DECISION2 and not allEnteredPlayersRolled() then return end
 
     local channel = IsInRaid() and "RAID" or "PARTY"
     state.pot = state.pot + 1
@@ -321,6 +323,7 @@ foldButton:SetScript("OnClick", function()
     local channel = IsInRaid() and "RAID" or "PARTY"
     state.roundPlayers[playerName] = {status = "folded"}
     C_ChatInfo.SendAddonMessage("PokerDice", "FOLD", channel)
+    SendChatMessage(L["folds"], "EMOTE")
     state.phase = Phase.SHOWDOWN_WAIT
     updateDisplayTable()
     refreshUI()
@@ -524,6 +527,7 @@ displayTable:SetText(L["Need to be in party"])
 
 local statusLabels = {
     active = L["StatusInRound"],
+    rolled = L["StatusRolled"],
     followed = L["StatusFollowed"],
     folded = L["StatusFolded"],
     locked = L["StatusReady"],
@@ -587,7 +591,7 @@ end
 getMissingPlayers = function()
     local missing = {}
     for name, p in pairs(state.roundPlayers) do
-        if p.status == "active" or p.status == "followed" then
+        if p.status == "active" or p.status == "rolled" or p.status == "followed" then
             table.insert(missing, name)
         end
     end
@@ -596,6 +600,16 @@ end
 
 allActivePlayersLocked = function()
     return #getMissingPlayers() == 0
+end
+
+-- Vrai si tous les joueurs entrés dans la manche (ayant misé l'ante) ont lancé leurs
+-- premiers dés. Le statut "active" signifie « a misé mais pas encore lancé » : tant
+-- qu'un tel joueur subsiste, on ne peut pas suivre.
+allEnteredPlayersRolled = function()
+    for _, p in pairs(state.roundPlayers) do
+        if p.status == "active" then return false end
+    end
+    return true
 end
 
 refreshUI = function()
@@ -615,10 +629,15 @@ refreshUI = function()
     elseif state.phase == Phase.DECISION2 then
         rollButton:Hide()
         bidButton:Show(); bidButton:SetText(L["Follow"])
-        if state.gold > 0 then bidButton:Enable() else bidButton:Disable() end
+        -- Suivre reste bloqué tant que tous les joueurs entrés n'ont pas lancé leurs dés (se coucher reste possible)
+        if state.gold > 0 and allEnteredPlayersRolled() then bidButton:Enable() else bidButton:Disable() end
         foldButton:Show(); foldButton:Enable()
         lockButton:Hide()
-        statusText:SetText(L["StatusDecision2"])
+        if allEnteredPlayersRolled() then
+            statusText:SetText(L["StatusDecision2"])
+        else
+            statusText:SetText(L["WaitingForRolls"])
+        end
     elseif state.phase == Phase.ROLL2 then
         rollButton:Show()
         bidButton:Hide()
@@ -779,7 +798,12 @@ rollButton:SetScript("OnClick", function()
         end
         PlaySound(36627)
         SendChatMessage(L["Rolls the dice and get "] .. describeDice(state.dice), "EMOTE")
+        -- On signale aux autres qu'on a lancé nos premiers dés, pour débloquer le suivi
+        state.roundPlayers[playerName].status = "rolled"
+        local channel = IsInRaid() and "RAID" or "PARTY"
+        C_ChatInfo.SendAddonMessage("PokerDice", "ROLL1", channel)
         state.phase = Phase.DECISION2
+        updateDisplayTable()
         refreshUI()
     elseif state.phase == Phase.ROLL2 then
         if not anySelected() then return end
@@ -832,6 +856,14 @@ eventFrame:SetScript("OnEvent", function(self, event, prefix, message, channel, 
 
     if action == "ANTE" then
         onPeerJoin(senderName, "active")
+    elseif action == "ROLL1" then
+        if state.roundPlayers[senderName] then
+            state.roundPlayers[senderName].status = "rolled"
+        else
+            state.roundPlayers[senderName] = {status = "rolled"}
+        end
+        updateDisplayTable()
+        refreshUI()
     elseif action == "FOLLOW" then
         onPeerJoin(senderName, "followed")
     elseif action == "FOLD" then
